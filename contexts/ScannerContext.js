@@ -1,10 +1,6 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { BarCodeScanner } from "expo-barcode-scanner";
 import SapDialog from "../components/SapDialog";
-import Barcode from "react-native-barcode-builder";
-import { GLView } from "expo-gl";
-import { Svg } from "react-native-svg";
-import { Shape } from "@react-native-community/art";
 
 export const ScannerContext = createContext({
   scannedCompleted: false,
