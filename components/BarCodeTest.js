@@ -10,13 +10,13 @@ export default function BarCodeTest() {
     handleScan,
   } = useScannerContext();
   return (
-    <View style={{alignItems: "center", minHeight: "100%", minWidth: "100%"}}
-      backgroundColor="#092C4C">
+    <View style={{justifyContent: "center", alignItems: "center", minHeight: "100%", minWidth: "100%"}}>
        {!isScanning && (
         <Button
           title="Scanna"
           onPress={handleScan}
-          color="white"
+        
+          
           
         />
       )}
@@ -28,10 +28,16 @@ export default function BarCodeTest() {
             onBarCodeScanned={
               scannedCompleted ? undefined : handleNewContainerScanning
             }
-            style={{ minWidth: "100%", minHeight: "100%" }}
+            style={{ minWidth: "100%", minHeight: "90%" }}
           />
         </View>
       )}
+      <View style={{margin: 10}}>
+        <Button 
+        title="Stäng"
+         />
+        </View>
     </View>
   );
 }
+     
