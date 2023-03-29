@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import {
   Modal,
@@ -8,7 +7,8 @@ import {
   Text,
   TextInput,
 } from "react-native";
-import MultiSelect from 'react-native-multiple-select';
+import MultiSelect from "react-native-multiple-select";
+import AxfoodQRCode from "./AxfoodQRCode";
 export default function SapDialog({
   children,
   beginButtonTitle,
@@ -29,15 +29,13 @@ export default function SapDialog({
     },
   });
 
+  let selectedItems = [];
 
-  let selectedItems = []
-
-
-const optionsList = [
-  { label: "Wellpapp", value: "wellpapp" },
-  { label: "Plast", value: "plast" },
-  { label: "Trä", value: "trä" },
-];
+  const optionsList = [
+    { label: "Wellpapp", value: "wellpapp" },
+    { label: "Plast", value: "plast" },
+    { label: "Trä", value: "trä" },
+  ];
 
   const onSubmit = (data) => console.log(data);
   return (
@@ -83,7 +81,7 @@ const optionsList = [
               )}
               name="title"
             />
-              <Controller
+            <Controller
               control={control}
               render={({ field: { onChange, value } }) => (
                 <View>
@@ -95,7 +93,7 @@ const optionsList = [
                     selectedItems={value}
                     displayKey="label"
                     submitButtonText="Bekräfta"
-                    itemTextColor="#092C4C"  
+                    itemTextColor="#092C4C"
                     tagTextColor="#092C4C"
                     tagBorderColor="#092C4C"
                     submitButtonColor="#092C4C"
@@ -107,6 +105,7 @@ const optionsList = [
               name="categories"
             />
           </View>
+          <AxfoodQRCode content="felixTestar" />
           {children}
           <View style={generalStyling.buttonsFlex}>
             <Pressable
