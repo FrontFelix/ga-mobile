@@ -19,7 +19,7 @@ export default function BarCodeTest() {
             onBarCodeScanned={
               scannedCompleted ? undefined : handleNewContainerScanning
             }
-            style={{ minWidth: "100%", minHeight: 320 }}
+            style={{ minWidth: "100%", minHeight: "95%" }}
           />
         </View>
       )}
