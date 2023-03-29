@@ -1,18 +1,29 @@
 import { StyleSheet } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { SafeAreaView } from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { ScannerProvider } from "./contexts/ScannerContext";
 import BottomNavbar from "./components/BottomNavbar";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import HomePage from "./pages/HomePage";
 import { StatusBar } from "expo-status-bar";
+import * as MediaLibrary from "expo-media-library";
+
 const Stack = createNativeStackNavigator();
 
 export default function App() {
+  const [hasCameraPermission, setHasCameraPermission] = useState(null);
+  useEffect(() => {
+    const getBarCodeScannerPermissions = async () => {
+      const { cameraStatus } = await MediaLibrary.requestPermissionsAsync();
+      setHasCameraPermission(cameraStatus === "granted");
+    };
+    getBarCodeScannerPermissions();
+  });
+
   return (
     <NavigationContainer>
-         <StatusBar />
+      <StatusBar />
       <ScannerProvider>
         <Stack.Navigator>
           <Stack.Screen
