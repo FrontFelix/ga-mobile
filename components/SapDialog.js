@@ -57,16 +57,35 @@ export default function SapDialog({
               rules={{ required: true }}
               render={({ field: { onChange, onBlur, value } }) => (
                 <View>
-                  <Text>Test</Text>
+                  <Text>Namn på container</Text>
                   <TextInput
                     onBlur={onBlur}
                     onChangeText={onChange}
                     value={value}
-                    placeholder='"Pizzatime"'
+                    placeholder='"MXD-64241"'
                     placeholderTextColor="#808080"
                     enablesReturnKeyAutomatically={true}
                   />
-                  {errors.title && <Text> Please enter a title</Text>}
+                  {errors.title && <Text>Skriv in container namn...</Text>}
+                </View>
+              )}
+              name="title"
+            />
+            <Controller
+              control={control}
+              rules={{ required: true }}
+              render={({ field: { onChange, onBlur, value } }) => (
+                <View>
+                  <Text>Container Kategori</Text>
+                  <TextInput
+                    onBlur={onBlur}
+                    onChangeText={onChange}
+                    value={value}
+                    placeholder='"Trä"'
+                    placeholderTextColor="#808080"
+                    enablesReturnKeyAutomatically={true}
+                  />
+                  {errors.title && <Text>Skriv in kategori på containern..</Text>}
                 </View>
               )}
               name="title"
