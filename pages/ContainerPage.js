@@ -6,8 +6,7 @@ export default function ContainerPage() {
   return (
     <SafeAreaView>
       <View
-        style={{ justifyContent: "center", alignItems: "center", padding: 10 }}
-      >
+        style={{ justifyContent: "center", alignItems: "center"}}>
         <BarCodeTest />
       </View>
     </SafeAreaView>

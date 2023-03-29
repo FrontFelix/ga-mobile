@@ -6,11 +6,13 @@ import { ScannerProvider } from "./contexts/ScannerContext";
 import BottomNavbar from "./components/BottomNavbar";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import HomePage from "./pages/HomePage";
+import { StatusBar } from "expo-status-bar";
 const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
     <NavigationContainer>
+         <StatusBar />
       <ScannerProvider>
         <Stack.Navigator>
           <Stack.Screen
