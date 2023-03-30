@@ -23,8 +23,11 @@ export default function AxFoodQRCode({ content, image }) {
   };
 
   return (
-    <View style={{ alignItems: "center" }}>
-      <ViewShot ref={viewShotRef} options={{ format: "jpg", quality: 0.9 }}>
+    <View style={{ alignItems: "center", marginTop: 50 }}>
+      <ViewShot
+        ref={viewShotRef}
+        options={{ format: "jpg", quality: 0.9 }}
+      >
         <QRCode
           value={content}
           size={200}
@@ -35,7 +38,10 @@ export default function AxFoodQRCode({ content, image }) {
           onError={(e) => console.log(e)}
         />
       </ViewShot>
-      <TouchableOpacity onPress={saveQRCode}>
+      <TouchableOpacity
+        style={{ marginTop: 50 }}
+        onPress={saveQRCode}
+      >
         <Text>Ladda ner QR-koden</Text>
       </TouchableOpacity>
     </View>

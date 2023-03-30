@@ -10,17 +10,21 @@ export default function BarCodeTest() {
     handleScan,
   } = useScannerContext();
   return (
-    <View style={{justifyContent: "center", alignItems: "center", minHeight: "100%", minWidth: "100%"}}>
-       {!isScanning && (
+    <View
+      style={{
+        justifyContent: "center",
+        alignItems: "center",
+        minHeight: "100%",
+        minWidth: "100%",
+      }}
+    >
+      {!isScanning && (
         <Button
           title="Scanna"
           onPress={handleScan}
-        
-          
-          
         />
       )}
-      
+
       {isScanning && (
         <View>
           {/* <Text>Här scannar du </Text> */}
@@ -32,12 +36,9 @@ export default function BarCodeTest() {
           />
         </View>
       )}
-      <View style={{margin: 10}}>
-        <Button 
-        title="Stäng"
-         />
-        </View>
+      <View style={{ margin: 10 }}>
+        <Button title="Stäng" />
+      </View>
     </View>
   );
 }
-     
