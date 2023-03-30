@@ -26,12 +26,11 @@ export const ScannerProvider = ({ children }) => {
   };
 
   const handleNewContainerScanning = async ({ type, data }) => {
-    setScannedCompleted(true);
     setNewContainerDialog(true);
     console.log("type", type);
     console.log("data", data);
     setBarCodeData({ type: type, data: data });
-    setIsScanning(false)
+    setIsScanning(false);
     // Hämta datan för barcodes och locationen...
     // Öppna upp dialogen för att lägga till container...
   };
