@@ -8,6 +8,7 @@ export const ScannerContext = createContext({
   hasCameraPermission: null,
   handleNewContainerScanning: (type, data) => undefined,
   handleScan: () => undefined,
+  handleScanClose: () => undefined,
 });
 
 export const ScannerProvider = ({ children }) => {
@@ -23,6 +24,10 @@ export const ScannerProvider = ({ children }) => {
 
   const handleScan = () => {
     setIsScanning(true);
+  };
+
+  const handleScanClose = () => {
+    setIsScanning(false);
   };
 
   const handleNewContainerScanning = async ({ type, data }) => {
@@ -51,6 +56,7 @@ export const ScannerProvider = ({ children }) => {
         hasCameraPermission,
         handleScan,
         handleNewContainerScanning,
+        handleScanClose,
       }}
     >
       {children}
