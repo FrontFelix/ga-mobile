@@ -34,7 +34,7 @@ export default function BarCodeTest() {
         </View>
       )}
       <View style={{ margin: 10 }}>
-        <Button title="Stäng" onPress={handleScanClose} />
+        <Button title="Stäng" />
       </View>
     </View>
   );

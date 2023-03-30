@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import MultiSelect from "react-native-multiple-select";
 import AxfoodQRCode from "./AxfoodQRCode";
+import QRCode from "react-native-qrcode-svg";
 export default function SapDialog({
   children,
   beginButtonTitle,
@@ -59,9 +60,12 @@ export default function SapDialog({
     >
       <View style={generalStyling.container}>
         <View style={generalStyling.modalView}>
-          <View>
-            <Text style={{ padding: 10 }}>{dialogTitle}</Text>
-          </View>
+          {!showQR && !showSpinner && (
+            <View>
+              <Text style={{ padding: 10 }}>{dialogTitle}</Text>
+            </View>
+          )}
+
           {showSpinner && (
             <View
               style={{
@@ -154,43 +158,37 @@ export default function SapDialog({
             )}
             {children}
           </View>
-          <View
-            style={
-              showQR
-                ? {
-                    width: "100%",
-                    flexDirection: "row",
-                    gap: "1",
-                    justifyContent: "flex-end",
-                    flex: 1,
+          {showSpinner ||
+            (!showQR && (
+              <View
+                style={{
+                  width: "100%",
+                  flexDirection: "row",
+                  gap: "1",
+                  flexGrow: 1,
+                  justifyContent: "flex-end",
+                }}
+              >
+                <Pressable
+                  style={generalStyling.beginButton}
+                  onPress={
+                    showQR ? () => console.log("test") : handleSubmit(onSubmit)
                   }
-                : {
-                    width: "100%",
-                    flexDirection: "row",
-                    gap: "1",
-                    justifyContent: "flex-end",
-                  }
-            }
-          >
-            <Pressable
-              style={generalStyling.beginButton}
-              onPress={
-                showQR ? () => console.log("test") : handleSubmit(onSubmit)
-              }
-            >
-              <Text style={{ color: "white", textAlign: "center" }}>
-                {showQR ? "Ladda ner" : `${beginButtonTitle}`}
-              </Text>
-            </Pressable>
-            <Pressable
-              style={generalStyling.endButton}
-              onPress={closeDialogFunction}
-            >
-              <Text style={{ textAlign: "center", color: "#092C4C" }}>
-                {endButtonTitle}
-              </Text>
-            </Pressable>
-          </View>
+                >
+                  <Text style={{ color: "white", textAlign: "center" }}>
+                    {showQR ? "Ladda ner" : `${beginButtonTitle}`}
+                  </Text>
+                </Pressable>
+                <Pressable
+                  style={generalStyling.endButton}
+                  onPress={closeDialogFunction}
+                >
+                  <Text style={{ textAlign: "center", color: "#092C4C" }}>
+                    {endButtonTitle}
+                  </Text>
+                </Pressable>
+              </View>
+            ))}
         </View>
       </View>
     </Modal>
@@ -210,7 +208,7 @@ let generalStyling = StyleSheet.create({
     gap: 10,
     padding: 10,
     width: 340,
-    height: 600,
+    height: 400,
     backgroundColor: "#F5F5F5",
     borderRadius: 20,
     alignItems: "center",
