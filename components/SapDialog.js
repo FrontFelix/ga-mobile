@@ -221,7 +221,7 @@ let generalStyling = StyleSheet.create({
     gap: 10,
     padding: 10,
     width: 340,
-    height: 400,
+    height: 500,
     backgroundColor: "#F5F5F5",
     borderRadius: 20,
     alignItems: "center",
@@ -268,6 +268,8 @@ let generalStyling = StyleSheet.create({
     borderWidth: 1,
     borderColor: "gray",
     padding: 10,
-    borderRadius: 2,
+    borderRadius: 5,
+    marginTop: 15,
+    marginBottom: 15,
   },
 });

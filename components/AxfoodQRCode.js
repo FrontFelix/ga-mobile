@@ -38,8 +38,11 @@ export default function AxFoodQRCode({ content, image }) {
           onError={(e) => console.log(e)}
         />
       </ViewShot>
-      <TouchableOpacity style={{ marginTop: 50 }} onPress={saveQRCode}>
-        <Text style={generalStyling.button}>Ladda ner QR-koden</Text>
+      <TouchableOpacity
+        style={{ marginTop: 70, borderRadius: 5 }}
+        onPress={saveQRCode}
+      >
+        <Text style={generalStyling.button}>Ladda ner QR-kod</Text>
       </TouchableOpacity>
     </View>
   );
@@ -52,8 +55,8 @@ const generalStyling = StyleSheet.create({
     color: "white",
     paddingTop: 15,
     paddingBottom: 15,
-    paddingLeft: 25,
-    paddingRight: 25,
+    paddingLeft: 35,
+    paddingRight: 35,
     borderRadius: 5,
   },
 });
