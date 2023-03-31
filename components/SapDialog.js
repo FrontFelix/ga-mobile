@@ -53,16 +53,27 @@ export default function SapDialog({
     }, 5000);
   };
   return (
-    <Modal
-      animationType="slide"
-      transparent={false}
-      visible={dialogOpen}
-    >
+    <Modal animationType="slide" transparent={false} visible={dialogOpen}>
       <View style={generalStyling.container}>
         <View style={generalStyling.modalView}>
           {!showQR && !showSpinner && (
             <View>
-              <Text style={{ padding: 10 }}>{dialogTitle}</Text>
+              <Text
+                style={{
+                  padding: 10,
+                  fontSize: "20",
+                  textAlign: "center",
+                }}
+              >
+                {dialogTitle}
+              </Text>
+              <View
+                style={{
+                  height: 2,
+                  minWidth: "100%",
+                  backgroundColor: "#092C4C",
+                }}
+              />
             </View>
           )}
 
@@ -89,16 +100,17 @@ export default function SapDialog({
                 rules={{ required: true, minLength: 4 }}
                 render={({ field: { onChange, onBlur, value } }) => (
                   <View>
-                    <Text>Namn på container</Text>
+                    <Text>Namn</Text>
                     <TextInput
                       onBlur={onBlur}
                       onChangeText={onChange}
                       value={value}
-                      placeholder='"MXD-64241"'
+                      placeholder="Ange namn"
                       placeholderTextColor="#808080"
                       enablesReturnKeyAutomatically={true}
+                      style={generalStyling.textInputs}
                     />
-                    {errors.title && <Text>Skriv in container namn...</Text>}
+                    {errors.title && <Text>Ange namn på container...</Text>}
                   </View>
                 )}
                 name="title"
@@ -108,16 +120,17 @@ export default function SapDialog({
                 rules={{ required: true, minLength: 2 }}
                 render={({ field: { onChange, onBlur, value } }) => (
                   <View>
-                    <Text>Vikt på container</Text>
+                    <Text>Vikt</Text>
                     <TextInput
                       onBlur={onBlur}
                       onChangeText={onChange}
                       value={value}
-                      placeholder='"200kg"'
+                      placeholder="Ange vikt"
                       placeholderTextColor="#808080"
                       enablesReturnKeyAutomatically={true}
+                      style={generalStyling.textInputs}
                     />
-                    {errors.title && <Text>Skriv in container vikt...</Text>}
+                    {errors.title && <Text>Ange ge vikt på container...</Text>}
                   </View>
                 )}
                 name="weight"
@@ -164,9 +177,9 @@ export default function SapDialog({
                 style={{
                   width: "100%",
                   flexDirection: "row",
-                  gap: "1",
+                  gap: "10",
                   flexGrow: 1,
-                  justifyContent: "flex-end",
+                  justifyContent: "center",
                 }}
               >
                 <Pressable
@@ -183,7 +196,7 @@ export default function SapDialog({
                   style={generalStyling.endButton}
                   onPress={closeDialogFunction}
                 >
-                  <Text style={{ textAlign: "center", color: "#092C4C" }}>
+                  <Text style={{ textAlign: "center", color: "gray" }}>
                     {endButtonTitle}
                   </Text>
                 </Pressable>
@@ -225,28 +238,36 @@ let generalStyling = StyleSheet.create({
     width: "100%",
     flexDirection: "row",
     gap: "1",
-    justifyContent: "flex-end",
+    justifyContent: "space-between",
     flex: 1,
   },
   beginButton: {
-    alignSelf: "flex-end",
+    alignSelf: "center",
+    minWidth: 125,
     backgroundColor: "#092C4C",
     color: "white",
-    minWidth: 64,
-    paddingTop: 10,
-    paddingBottom: 10,
-    paddingLeft: 20,
-    paddingRight: 20,
+    paddingTop: 15,
+    paddingBottom: 15,
+    paddingLeft: 25,
+    paddingRight: 25,
     borderRadius: 5,
   },
   endButton: {
     color: "#0070f2",
-    minWidth: 64,
-    paddingTop: 10,
-    paddingBottom: 10,
-    paddingLeft: 20,
-    paddingRight: 20,
+    minWidth: 125,
+    borderWidth: "1",
+    borderColor: "gray",
+    paddingTop: 15,
+    paddingBottom: 15,
+    paddingLeft: 25,
+    paddingRight: 25,
     borderRadius: 5,
-    alignSelf: "flex-end",
+    alignSelf: "center",
+  },
+  textInputs: {
+    borderWidth: 1,
+    borderColor: "gray",
+    padding: 10,
+    borderRadius: 2,
   },
 });
