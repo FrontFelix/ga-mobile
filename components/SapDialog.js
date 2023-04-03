@@ -53,7 +53,11 @@ export default function SapDialog({
     }, 5000);
   };
   return (
-    <Modal animationType="slide" transparent={false} visible={dialogOpen}>
+    <Modal
+      animationType="slide"
+      transparent={false}
+      visible={dialogOpen}
+    >
       <View style={generalStyling.container}>
         <View style={generalStyling.modalView}>
           {!showQR && !showSpinner && (
@@ -221,7 +225,7 @@ let generalStyling = StyleSheet.create({
     gap: 10,
     padding: 10,
     width: 340,
-    height: 400,
+    height: 450,
     backgroundColor: "#F5F5F5",
     borderRadius: 20,
     alignItems: "center",
