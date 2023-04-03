@@ -1,5 +1,6 @@
 import { useForm, Controller } from "react-hook-form";
 import { useState } from "react";
+import base64 from "react-native-base64";
 import {
   Modal,
   Pressable,
@@ -45,12 +46,34 @@ export default function SapDialog({
 
   const onSubmit = async (data) => {
     setShowSpinner(true);
+    const url =
+      "http://garrison-planet9.westeurope.cloudapp.azure.com:8080/api/serverscript/axfood/containers";
+    const username = "admin";
+    const password = "Garrison";
+    const encodedCredentials = base64.encode(`${username}:${password}`);
+    const bodyData = {
+      container_category: data.categories,
+      container_name: data.title,
+      container_location: {
+        lat: "testar",
+        long: "testar2",
+      },
+      container_weight: data.weight,
+    };
+
+    let response = await fetch(url, {
+      method: "POST",
+      headers: {
+        Authorization: `Basic ${encodedCredentials}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(bodyData),
+    });
+    let JSONdata = await response.json();
+    setContainerID(JSONdata.containerID);
+    setShowSpinner(false);
+    setShowQR(true);
     // skicka request till neptune och vänta svar
-    setTimeout(() => {
-      console.log(data);
-      setShowSpinner(false);
-      setShowQR(true);
-    }, 5000);
   };
   return (
     <Modal
@@ -65,7 +88,7 @@ export default function SapDialog({
               <Text
                 style={{
                   padding: 10,
-                  fontSize: "20",
+                  fontSize: 20,
                   textAlign: "center",
                 }}
               >
@@ -168,9 +191,11 @@ export default function SapDialog({
           <View>
             {showQR && (
               <View>
-                <AxfoodQRCode
-                  content={JSON.stringify({ containerID: "test" })}
-                />
+                {containerID !== null && (
+                  <AxfoodQRCode
+                    content={JSON.stringify({ containerID: containerID })}
+                  />
+                )}
               </View>
             )}
             {children}

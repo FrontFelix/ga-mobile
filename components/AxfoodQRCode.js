@@ -8,7 +8,7 @@ import { useScannerContext } from "../contexts/ScannerContext";
 
 export default function AxFoodQRCode({ content, image }) {
   const viewShotRef = useRef(null);
-  const { handleScanClose } = useScannerContext();
+  const { handleScanClose, handleCloseNewContainer } = useScannerContext();
 
   const saveQRCode = async () => {
     try {
@@ -19,7 +19,7 @@ export default function AxFoodQRCode({ content, image }) {
       // Spara bilden i galleriet
       const asset = await MediaLibrary.createAssetAsync(uri);
       await MediaLibrary.createAlbumAsync("AxfoodQR", asset, false);
-      handleScanClose();
+      handleCloseNewContainer();
     } catch (error) {
       console.error("Kunde inte spara QR-koden till galleriet", error);
     }

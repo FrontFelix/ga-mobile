@@ -9,6 +9,7 @@ export const ScannerContext = createContext({
   handleNewContainerScanning: (type, data) => undefined,
   handleScan: () => undefined,
   handleScanClose: () => undefined,
+  handleCloseNewContainer: () => undefined,
 });
 
 export const ScannerProvider = ({ children }) => {
@@ -19,6 +20,10 @@ export const ScannerProvider = ({ children }) => {
   const [newContainerDialog, setNewContainerDialog] = useState(false);
 
   const closeNewContainerDialog = () => {
+    setNewContainerDialog(false);
+  };
+
+  const handleCloseNewContainer = () => {
     setNewContainerDialog(false);
   };
 
@@ -57,6 +62,7 @@ export const ScannerProvider = ({ children }) => {
         handleScan,
         handleNewContainerScanning,
         handleScanClose,
+        handleCloseNewContainer,
       }}
     >
       {children}
