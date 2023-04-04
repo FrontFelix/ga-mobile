@@ -11,9 +11,9 @@ import {
   ActivityIndicator,
 } from "react-native";
 import MultiSelect from "react-native-multiple-select";
-import AxfoodQRCode from "./AxfoodQRCode";
+import AxfoodQRCode from "../AxfoodQRCode";
 import QRCode from "react-native-qrcode-svg";
-export default function SapDialog({
+export default function AddContainerDialog({
   children,
   beginButtonTitle,
   endButtonTitle,

@@ -1,5 +1,13 @@
 import { Modal, View, StyleSheet, Text, TouchableOpacity } from "react-native";
-export default function MarkerModal({ open, closeDialog }) {
+import * as Location from "expo-location";
+import { useEffect, useState } from "react";
+export default function MarkerModal({
+  open,
+  closeDialog,
+  container,
+  locationAddress,
+}) {
+  const [address, setAddress] = useState(null);
   return (
     <Modal
       animationType="slide"
@@ -7,10 +15,15 @@ export default function MarkerModal({ open, closeDialog }) {
       visible={open}
     >
       <View style={styles.modal}>
-        <Text>testnamn</Text>
-        <Text>testdata</Text>
+        <Text>Container Namn - {container.name}</Text>
+        <Text>Kategorier</Text>
+        {container.categories.map((category) => {
+          return <Text style={{ fontWeight: "bold" }}>{category}</Text>;
+        })}
+        <Text>Vikt - {container.weight}</Text>
+        <Text>{locationAddress && locationAddress}</Text>
         <TouchableOpacity onPress={closeDialog}>
-          <Text>Close</Text>
+          <Text>Stäng</Text>
         </TouchableOpacity>
       </View>
     </Modal>

@@ -1,23 +1,35 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { BarCodeScanner } from "expo-barcode-scanner";
-import SapDialog from "../components/SapDialog";
+import AddContainerDialog from "../components/Modals/AddContainerDialog";
+import * as Location from "expo-location";
+import { updateContainerStatus, getContainers } from "../hooks/scannerHooks";
 
 export const ScannerContext = createContext({
   scannedCompleted: false,
-  isScanning: false,
+  isScanningData: false,
+  isNewContainerScanning: false,
   hasCameraPermission: null,
+  hasLocationPermission: null,
+  handleUpdateContainerScanning: (type, data) => undefined,
   handleNewContainerScanning: (type, data) => undefined,
-  handleScan: () => undefined,
+  handleNewContainerScan: () => undefined,
+  handleScanData: () => undefined,
   handleScanClose: () => undefined,
   handleCloseNewContainer: () => undefined,
+  pickedUp: null,
+  containers: [],
 });
 
 export const ScannerProvider = ({ children }) => {
   const [scannedCompleted, setScannedCompleted] = useState(false); // Om scanningen är completed
-  const [isScanning, setIsScanning] = useState(false); // Om den ska scanna
+  const [isNewContainerScanning, setIsNewContainerScanning] = useState(false); // Om den ska scanna
+  const [pickedUp, setPickedUp] = useState(null);
+  const [isScanningData, setIsScanningData] = useState(false);
   const [hasCameraPermission, setHasCameraPermission] = useState(null);
+  const [hasLocationPermission, setHasLocationPermission] = useState(null);
   const [barCodeData, setBarCodeData] = useState(null);
   const [newContainerDialog, setNewContainerDialog] = useState(false);
+  const [containers, setContainers] = useState([]);
 
   const closeNewContainerDialog = () => {
     setNewContainerDialog(false);
@@ -27,20 +39,48 @@ export const ScannerProvider = ({ children }) => {
     setNewContainerDialog(false);
   };
 
-  const handleScan = () => {
-    setIsScanning(true);
+  const handleNewContainerScan = () => {
+    setIsNewContainerScanning(true);
+  };
+
+  const handleScanData = () => {
+    setIsScanningData(true);
   };
 
   const handleScanClose = () => {
     setIsScanning(false);
   };
 
+  const handleUpdateContainerScanning = async ({ type, data }) => {
+    setIsScanningData(false);
+    const containerId = JSON.parse(data).containerID; // Lägg till det container-ID som ska uppdateras här;
+    let location = await Location.getCurrentPositionAsync({});
+    let lat = location.coords.latitude;
+    let long = location.coords.longitude;
+
+    const bodyData = {
+      container_location: {
+        lat: lat,
+        long: long,
+      },
+      container_status: "test",
+    };
+
+    const fetchResponse = await updateContainerStatus({
+      containerId,
+      bodyData,
+    });
+    console.log(fetchResponse);
+  };
+
   const handleNewContainerScanning = async ({ type, data }) => {
     setNewContainerDialog(true);
-    console.log("type", type);
-    console.log("data", data);
+    if (isScanningData) {
+      console.log(JSON.parse(data).containerID);
+    }
     setBarCodeData({ type: type, data: data });
-    setIsScanning(false);
+    setIsNewContainerScanning(false);
+    setIsScanningData(false);
     // Hämta datan för barcodes och locationen...
     // Öppna upp dialogen för att lägga till container...
   };
@@ -48,32 +88,45 @@ export const ScannerProvider = ({ children }) => {
   useEffect(() => {
     const getBarCodeScannerPermissions = async () => {
       const { cameraStatus } = await BarCodeScanner.requestPermissionsAsync();
+      let { locationStatus } =
+        await Location.requestForegroundPermissionsAsync();
+      setHasLocationPermission(locationStatus === "granted");
       setHasCameraPermission(cameraStatus === "granted");
     };
+    const asyncFetch = async () => {
+      const containers = await getContainers();
+      setContainers(containers);
+      console.log(containers);
+    };
+    asyncFetch();
     getBarCodeScannerPermissions();
   }, []);
 
   return (
     <ScannerContext.Provider
       value={{
-        isScanning,
+        isNewContainerScanning,
+        isScanningData,
         scannedCompleted,
         hasCameraPermission,
-        handleScan,
+        handleNewContainerScan,
         handleNewContainerScanning,
+        handleScanData,
         handleScanClose,
         handleCloseNewContainer,
+        handleUpdateContainerScanning,
+        containers,
       }}
     >
       {children}
-      <SapDialog
+      <AddContainerDialog
         dialogTitle="Ny Container"
         beginButtonTitle="Lägg till"
         endButtonTitle="Stäng"
         dialogOpen={newContainerDialog}
         closeDialogFunction={closeNewContainerDialog}
         size="large"
-      ></SapDialog>
+      ></AddContainerDialog>
     </ScannerContext.Provider>
   );
 };

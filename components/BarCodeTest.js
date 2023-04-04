@@ -4,10 +4,13 @@ import { useScannerContext } from "../contexts/ScannerContext";
 
 export default function BarCodeTest() {
   const {
-    isScanning,
+    isNewContainerScanning,
+    isScanningData,
     scannedCompleted,
     handleNewContainerScanning,
-    handleScan,
+    handleScanData,
+    handleNewContainerScan,
+    handleUpdateContainerScanning,
     handleScanClose,
   } = useScannerContext();
 
@@ -20,10 +23,10 @@ export default function BarCodeTest() {
         minWidth: "100%",
       }}
     >
-      {!isScanning && (
+      {!isNewContainerScanning && (
         <Pressable
           Text="Scanna"
-          onPress={handleScan}
+          onPress={handleNewContainerScan}
           style={generalStyling.beginButtonScanner}
           alignItems="center"
         >
@@ -31,12 +34,34 @@ export default function BarCodeTest() {
         </Pressable>
       )}
 
-      {isScanning && (
+      {isNewContainerScanning && (
         <View>
           {/* <Text>Här scannar du </Text> */}
           <BarCodeScanner
             onBarCodeScanned={
               scannedCompleted ? undefined : handleNewContainerScanning
+            }
+            style={{ minWidth: "100%", minHeight: "80%" }}
+          />
+        </View>
+      )}
+      {!isScanningData && (
+        <Pressable
+          Text="Scanna Data"
+          onPress={handleScanData}
+          style={generalStyling.beginButtonScanner}
+          alignItems="center"
+        >
+          <Text style={{ color: "white", fontSize: 20 }}>Scanna Data</Text>
+        </Pressable>
+      )}
+
+      {isScanningData && (
+        <View>
+          {/* <Text>Här scannar du </Text> */}
+          <BarCodeScanner
+            onBarCodeScanned={
+              scannedCompleted ? undefined : handleUpdateContainerScanning
             }
             style={{ minWidth: "100%", minHeight: "80%" }}
           />
