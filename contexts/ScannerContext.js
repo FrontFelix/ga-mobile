@@ -23,7 +23,10 @@ export const ScannerContext = createContext({
 export const ScannerProvider = ({ children }) => {
   const [scannedCompleted, setScannedCompleted] = useState(false); // Om scanningen är completed
   const [isNewContainerScanning, setIsNewContainerScanning] = useState(false); // Om den ska scanna
-  const [pickedUp, setPickedUp] = useState(null);
+  const [pickedUp, setPickedUp] = useState({
+    pickedUp: false,
+    containerID: "",
+  });
   const [isScanningData, setIsScanningData] = useState(false);
   const [hasCameraPermission, setHasCameraPermission] = useState(null);
   const [hasLocationPermission, setHasLocationPermission] = useState(null);
@@ -63,12 +66,17 @@ export const ScannerProvider = ({ children }) => {
         lat: lat,
         long: long,
       },
-      container_status: "test",
+      container_status: "Out for delivery",
+      container_pickedup_by: "1234567",
     };
 
     const fetchResponse = await updateContainerStatus({
       containerId,
       bodyData,
+    });
+    setPickedUp({
+      containerID: containerId,
+      pickedUp: true,
     });
     console.log(fetchResponse);
   };
@@ -116,6 +124,7 @@ export const ScannerProvider = ({ children }) => {
         handleCloseNewContainer,
         handleUpdateContainerScanning,
         containers,
+        pickedUp,
       }}
     >
       {children}

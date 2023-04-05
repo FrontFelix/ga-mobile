@@ -12,6 +12,7 @@ export default function BarCodeTest() {
     handleNewContainerScan,
     handleUpdateContainerScanning,
     handleScanClose,
+    pickedUp,
   } = useScannerContext();
 
   return (
@@ -45,7 +46,7 @@ export default function BarCodeTest() {
           />
         </View>
       )}
-      {!isScanningData && (
+      {!isScanningData && !pickedUp.pickedUp && (
         <Pressable
           Text="Scanna Data"
           onPress={handleScanData}

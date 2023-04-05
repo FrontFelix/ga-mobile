@@ -1,13 +1,13 @@
 import { StatusBar } from "expo-status-bar";
-import { Text, View} from "react-native";
+import { Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import TopBar from "../components/TopBar";
 
 export default function HomePage() {
   return (
-    <SafeAreaView>
-      <View style={{alignItems: "center", minHeight: "100%"}}>
-        <Text style={{fontSize: 30, marginTop: 20}}>SAAS Axfood</Text>
-      </View>
+    <SafeAreaView style={{ padding: 20 }}>
+      <TopBar />
+      <View style={{ alignItems: "center", minHeight: "100%" }}></View>
     </SafeAreaView>
   );
 }
