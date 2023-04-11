@@ -18,6 +18,9 @@ export const ScannerContext = createContext({
   handleCloseNewContainer: () => undefined,
   pickedUp: null,
   containers: [],
+  haverSine: (lat1, lon1) => undefined,
+  generateRoute: async (containers) => undefined,
+  routeLines: null,
 });
 
 export const ScannerProvider = ({ children }) => {
@@ -33,6 +36,7 @@ export const ScannerProvider = ({ children }) => {
   const [barCodeData, setBarCodeData] = useState(null);
   const [newContainerDialog, setNewContainerDialog] = useState(false);
   const [containers, setContainers] = useState([]);
+  const [routeLines, setRouteLines] = useState(null);
 
   const closeNewContainerDialog = () => {
     setNewContainerDialog(false);
@@ -53,6 +57,33 @@ export const ScannerProvider = ({ children }) => {
   const handleScanClose = () => {
     setIsScanning(false);
   };
+
+  async function haverSine(lat1, lon1) {
+    const { coords } = await Location.getCurrentPositionAsync({}); // Hämtar hem den aktuella mobil positionen
+
+    // Lite matte för att skriva om LAT LONG till radianer ( CHAT GPT HJÄLPTE MIG MED MATTEN <3 )
+    function toRadians(degrees) {
+      return degrees * (Math.PI / 180);
+    }
+    const lat1_rad = toRadians(lat1);
+    const lon1_rad = toRadians(lon1);
+    const lat2_rad = toRadians(coords.latitude);
+    const lon2_rad = toRadians(coords.longitude);
+
+    // Matte för räkna ut skillnaden mellan avstånden
+    const delta_lat = lat2_rad - lat1_rad;
+    const delta_lon = lon2_rad - lon1_rad;
+
+    // Räkna ut avståndet på jordens yta med Haversine-formeln ( CHAT GPT HJÄLPTE MIG MED FORMELN <3 )
+    const a =
+      Math.sin(delta_lat / 2) ** 2 +
+      Math.cos(lat1_rad) * Math.cos(lat2_rad) * Math.sin(delta_lon / 2) ** 2;
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    const distance = 6371 * c * 1000; // Räkna om till meter
+
+    // Retunerar avstånden mellan din aktuella position och till containern
+    return distance;
+  }
 
   const handleUpdateContainerScanning = async ({ type, data }) => {
     setIsScanningData(false);
@@ -93,6 +124,62 @@ export const ScannerProvider = ({ children }) => {
     // Öppna upp dialogen för att lägga till container...
   };
 
+  const generateRoute = async (containers) => {
+    let updatedContainers = await Promise.all(
+      containers.map(async (container) => {
+        // Skriver om objektet då vi inte behöver all information
+        const updatedItem = {
+          name: container.name,
+          location: container.location,
+          // använder formeln som skapats för räkna avståndet.
+          distance: await haverSine(
+            container.location.lat,
+            container.location.long
+          ),
+        };
+        // Retunerar det nya objektet till vår lista.
+        return updatedItem;
+      })
+    );
+
+    // Sorterar listan från lägsta avståndet till längsta.
+    updatedContainers.sort((a, b) => a.distance - b.distance);
+    //Hämtar hem din position
+    const { coords } = await Location.getCurrentPositionAsync({});
+
+    const markersPosition = updatedContainers.map((container, index) => {
+      // Skriver om objekten till arrays, för det behöver vi sedan i vår "PolyLine" från expo-map
+
+      // Om index är 0 då ska vi först göra kordinaterna från mobilen till närmaste container eftersom vi sorterade listan förut.
+      if (index === 0) {
+        return [
+          {
+            latitude: coords.latitude,
+            longitude: coords.longitude,
+          },
+          {
+            latitude: container.location.lat,
+            longitude: container.location.long,
+          },
+        ];
+        // Om index är mer 0 då så räknar vi avståndet från senaste containern till nuvarande container. Därflr vi kör index-1
+      } else {
+        return [
+          {
+            latitude: updatedContainers[index - 1].location.lat,
+            longitude: updatedContainers[index - 1].location.long,
+          },
+          {
+            latitude: container.location.lat,
+            longitude: container.location.long,
+          },
+        ];
+      }
+    });
+    // Retunerar den nya listan för våra polylines ( routes )
+    return markersPosition;
+  };
+
   useEffect(() => {
     const getBarCodeScannerPermissions = async () => {
       const { cameraStatus } = await BarCodeScanner.requestPermissionsAsync();
@@ -102,9 +189,10 @@ export const ScannerProvider = ({ children }) => {
       setHasCameraPermission(cameraStatus === "granted");
     };
     const asyncFetch = async () => {
-      const containers = await getContainers();
-      setContainers(containers);
-      console.log(containers);
+      const containersFetch = await getContainers();
+      const routes = await generateRoute(containersFetch);
+      setRouteLines(routes);
+      setContainers(containersFetch);
     };
     asyncFetch();
     getBarCodeScannerPermissions();
@@ -125,6 +213,9 @@ export const ScannerProvider = ({ children }) => {
         handleUpdateContainerScanning,
         containers,
         pickedUp,
+        haverSine,
+        generateRoute,
+        routeLines,
       }}
     >
       {children}

@@ -1,12 +1,22 @@
-import { Text } from "react-native";
-import { View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import MapView, { Polyline } from "react-native-maps";
+import { View, Image, Text } from "react-native";
+// import { SafeAreaView } from "react-native-safe-area-context";
+import MapView, { Polyline, Marker } from "react-native-maps";
 import MapMarker from "../components/MapMarker";
 import { useScannerContext } from "../contexts/ScannerContext";
+import { useEffect, useState } from "react";
+import * as Location from "expo-location";
 
 export default function MapPage() {
-  const { containers } = useScannerContext();
+  const { containers, routeLines } = useScannerContext();
+  const [locationMark, setLocationMark] = useState();
+  useEffect(() => {
+    async function getLocation() {
+      const { coords } = await Location.getCurrentPositionAsync({});
+      setLocationMark(coords);
+    }
+    getLocation();
+  }, []);
+
   return (
     <View style={{ position: "relative" }}>
       <Text
@@ -25,34 +35,40 @@ export default function MapPage() {
       >
         Klicka på containrarna för att se mer information
       </Text>
-      <MapView
-        style={{ width: "100%", height: "100%" }}
-        initialRegion={{
-          latitude: 57.699398313724416,
-          longitude: 11.937579499470981,
-          latitudeDelta: 0.0922,
-          longitudeDelta: 0.0421,
-        }}
-      >
-        {containers.map((marker, index) => (
-          <>
-            <MapMarker
-              key={index}
-              Cords={marker.location}
-              Name={marker.name}
-              Categories={marker.categories}
-              Weight={marker.weight}
-            />
-            <Polyline
-              coordinates={[
-                { latitude: 57.699398313724416, longitude: 11.937579499470981 },
-                { latitude: 57.91259, longitude: 12.05591 },
-              ]}
-              strokeWidth={3}
-            />
-          </>
-        ))}
-      </MapView>
+      {locationMark && (
+        <MapView
+          style={{ width: "100%", height: "100%" }}
+          initialRegion={{
+            latitude: locationMark.latitude,
+            longitude: locationMark.longitude,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421,
+          }}
+        >
+          <View>
+            <Marker coordinate={locationMark}>
+              <Image
+                source={require("../assets/box-truck.png")}
+                style={{ width: 40, height: 40 }}
+              />
+            </Marker>
+            {containers.length > 0 &&
+              containers.map((marker, index) => (
+                <MapMarker
+                  key={index}
+                  Cords={marker.location}
+                  Name={marker.name}
+                  Categories={marker.categories}
+                  Weight={marker.weight}
+                />
+              ))}
+            {routeLines.length > 0 &&
+              routeLines.map((marker, index) => (
+                <Polyline key={index} coordinates={marker} strokeWidth={3} />
+              ))}
+          </View>
+        </MapView>
+      )}
     </View>
   );
 }
