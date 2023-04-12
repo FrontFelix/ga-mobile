@@ -14,7 +14,7 @@ export default function TopBar() {
         <View style={{ flexDirection: "row", gap: 5, alignItems: "center" }}>
           <Image
             source={require("../assets/profilePic.png")}
-            style={{ width: 45, height: 45, borderRadius: "50%" }}
+            style={{ width: 45, height: 45, borderRadius: 50 }}
           />
           <Text>Emil Hagelin</Text>
         </View>

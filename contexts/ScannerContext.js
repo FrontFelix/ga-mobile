@@ -3,6 +3,7 @@ import { BarCodeScanner } from "expo-barcode-scanner";
 import AddContainerDialog from "../components/Modals/AddContainerDialog";
 import * as Location from "expo-location";
 import { updateContainerStatus, getContainers } from "../hooks/scannerHooks";
+import { haverSine } from "../hooks/mathHooks";
 
 export const ScannerContext = createContext({
   scannedCompleted: false,
@@ -18,14 +19,17 @@ export const ScannerContext = createContext({
   handleCloseNewContainer: () => undefined,
   pickedUp: null,
   containers: [],
-  haverSine: (lat1, lon1) => undefined,
   generateRoute: async (containers) => undefined,
   routeLines: null,
+  polyLineKey: 0,
+  handleUpdateRoute: () => undefined,
+  handleSelectedContainer: (container) => undefined,
 });
 
 export const ScannerProvider = ({ children }) => {
   const [scannedCompleted, setScannedCompleted] = useState(false); // Om scanningen är completed
   const [isNewContainerScanning, setIsNewContainerScanning] = useState(false); // Om den ska scanna
+  const [polyLineKey, setPolyLineKey] = useState(0);
   const [pickedUp, setPickedUp] = useState({
     pickedUp: false,
     containerID: "",
@@ -58,32 +62,20 @@ export const ScannerProvider = ({ children }) => {
     setIsScanning(false);
   };
 
-  async function haverSine(lat1, lon1) {
-    const { coords } = await Location.getCurrentPositionAsync({}); // Hämtar hem den aktuella mobil positionen
+  const handleUpdateRoute = () => {
+    setPolyLineKey(polyLineKey + 1);
+  };
 
-    // Lite matte för att skriva om LAT LONG till radianer ( CHAT GPT HJÄLPTE MIG MED MATTEN <3 )
-    function toRadians(degrees) {
-      return degrees * (Math.PI / 180);
-    }
-    const lat1_rad = toRadians(lat1);
-    const lon1_rad = toRadians(lon1);
-    const lat2_rad = toRadians(coords.latitude);
-    const lon2_rad = toRadians(coords.longitude);
-
-    // Matte för räkna ut skillnaden mellan avstånden
-    const delta_lat = lat2_rad - lat1_rad;
-    const delta_lon = lon2_rad - lon1_rad;
-
-    // Räkna ut avståndet på jordens yta med Haversine-formeln ( CHAT GPT HJÄLPTE MIG MED FORMELN <3 )
-    const a =
-      Math.sin(delta_lat / 2) ** 2 +
-      Math.cos(lat1_rad) * Math.cos(lat2_rad) * Math.sin(delta_lon / 2) ** 2;
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    const distance = 6371 * c * 1000; // Räkna om till meter
-
-    // Retunerar avstånden mellan din aktuella position och till containern
-    return distance;
-  }
+  const handleSelectedContainer = (container) => {
+    let updatedList = containers.map((item) => {
+      if (item.id === container.id) {
+        return container;
+      } else {
+        return item;
+      }
+    });
+    console.log(updatedList);
+  };
 
   const handleUpdateContainerScanning = async ({ type, data }) => {
     setIsScanningData(false);
@@ -129,8 +121,7 @@ export const ScannerProvider = ({ children }) => {
       containers.map(async (container) => {
         // Skriver om objektet då vi inte behöver all information
         const updatedItem = {
-          name: container.name,
-          location: container.location,
+          ...container,
           // använder formeln som skapats för räkna avståndet.
           distance: await haverSine(
             container.location.lat,
@@ -190,6 +181,17 @@ export const ScannerProvider = ({ children }) => {
     };
     const asyncFetch = async () => {
       const containersFetch = await getContainers();
+      const updatedContainers = containersFetch.map((container) => {
+        return {
+          ...container,
+          marker: [
+            { latitude: 0, longitude: 0 },
+            { latitude: 0, longitude: 0 },
+          ],
+          routeSelected: false,
+        };
+      });
+      console.log("containersFetch", updatedContainers);
       const routes = await generateRoute(containersFetch);
       setRouteLines(routes);
       setContainers(containersFetch);
@@ -216,6 +218,9 @@ export const ScannerProvider = ({ children }) => {
         haverSine,
         generateRoute,
         routeLines,
+        polyLineKey,
+        handleUpdateRoute,
+        handleSelectedContainer,
       }}
     >
       {children}

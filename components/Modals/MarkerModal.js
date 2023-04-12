@@ -8,6 +8,7 @@ import {
 } from "react-native";
 import * as Location from "expo-location";
 import { useEffect, useState } from "react";
+import { useScannerContext } from "../../contexts/ScannerContext";
 export default function MarkerModal({
   open,
   closeDialog,
@@ -15,8 +16,22 @@ export default function MarkerModal({
   locationAddress,
 }) {
   const [address, setAddress] = useState(null);
+  const { handleSelectedContainer } = useScannerContext();
+  const [changedContainer, setChangedContainer] = useState(container);
+
+  const changeContainer = () => {
+    let updatedContainer = container;
+    updatedContainer.routeSelected = !changedContainer.routeSelected;
+    setChangedContainer(updatedContainer);
+    handleSelectedContainer(changedContainer);
+  };
+
   return (
-    <Modal animationType="slide" transparent={false} visible={open}>
+    <Modal
+      animationType="slide"
+      transparent={false}
+      visible={open}
+    >
       <View style={styles.modal}>
         <View>
           <View style={styles.containerName}>
@@ -39,6 +54,13 @@ export default function MarkerModal({
             <Text style={{ fontSize: 20 }}>
               Adress: {locationAddress && locationAddress}
             </Text>
+          </View>
+          <View style={styles.containerAddress}>
+            <TouchableOpacity onPress={changeContainer}>
+              <Text style={{ fontSize: 20 }}>
+                {container.routeSelected ? "Avmarkera" : "Markera"}
+              </Text>
+            </TouchableOpacity>
           </View>
         </View>
         <View style={styles.closeContainerDialog}>

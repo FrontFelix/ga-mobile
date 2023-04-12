@@ -4,42 +4,44 @@ import MarkerModal from "./Modals/MarkerModal";
 import { useState, useEffect } from "react";
 import { Image, View } from "react-native";
 import * as Location from "expo-location";
-export default function MapMarker({
-  Cords,
-  Categories,
-  Weight,
-  Name,
-  Agreement,
-}) {
+import { useScannerContext } from "../contexts/ScannerContext";
+export default function MapMarker({ container }) {
   const [assets, error] = useAssets([require("./assets/container.png")]);
   const [modalState, setModalState] = useState(false);
-  const [container, setContainer] = useState({
+  const [modalContainer, setContainer] = useState({
     name: "",
     weight: "",
     agreement: "",
     categories: [],
   });
+
+  const { generateRoute, handleUpdateRoute, polyLineKey, containers } =
+    useScannerContext();
   const [locationAddress, setLocationAddress] = useState(null);
 
   useEffect(() => {
     const asyncSetAddress = async () => {
       let addressResponse = await Location.reverseGeocodeAsync({
-        latitude: Cords.lat,
-        longitude: Cords.long,
+        latitude: container.location.lat,
+        longitude: container.location.long,
       });
       await setLocationAddress(addressResponse[0].name);
-      console.log(locationAddress);
+      console.log("markerLocation", locationAddress);
     };
     asyncSetAddress();
   }, []);
 
   const openModal = () => {
     setContainer({
-      name: Name,
-      categories: Categories,
-      weight: Weight,
-      agreement: Agreement,
+      name: container.name,
+      categories: container.categories,
+      weight: container.weight,
+      agreement: container.agreement,
+      id: container.id,
+      routeSelected: container.routeSelected,
+      marker: container.marker,
     });
+    console.log(container);
     setModalState(true);
   };
 
@@ -50,10 +52,11 @@ export default function MapMarker({
   return (
     <View>
       <Marker
+        key={polyLineKey}
         onPress={openModal}
         coordinate={{
-          latitude: Cords.lat,
-          longitude: Cords.long,
+          latitude: container.location.lat,
+          longitude: container.location.long,
         }}
       >
         <Image
@@ -61,7 +64,7 @@ export default function MapMarker({
           style={{ width: 40, height: 40 }}
         />
         <MarkerModal
-          container={container}
+          container={modalContainer}
           locationAddress={locationAddress}
           closeDialog={closeModal}
           open={modalState}
