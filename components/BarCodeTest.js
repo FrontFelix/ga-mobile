@@ -26,12 +26,12 @@ export default function BarCodeTest() {
     >
       {!isNewContainerScanning && (
         <Pressable
-          Text="Scanna"
+          Text="Scanna ny container"
           onPress={handleNewContainerScan}
           style={generalStyling.beginButtonScanner}
           alignItems="center"
         >
-          <Text style={{ color: "white", fontSize: 20 }}>Scanna</Text>
+          <Text style={{ color: "white", fontSize: 20 }}>Scanna container</Text>
         </Pressable>
       )}
 
@@ -48,7 +48,7 @@ export default function BarCodeTest() {
       )}
       {!isScanningData && !pickedUp.pickedUp && (
         <Pressable
-          Text="Scanna Data"
+          Text="Scanna"
           onPress={handleScanData}
           style={generalStyling.beginButtonScanner}
           alignItems="center"
@@ -94,8 +94,9 @@ let generalStyling = StyleSheet.create({
     backgroundColor: "#092C4C",
     color: "white",
     minWidth: 250,
-    paddingTop: 15,
-    paddingBottom: 15,
+    marginBottom: 20,
+    paddingTop: 20,
+    paddingBottom: 20,
     paddingLeft: 40,
     paddingRight: 40,
     borderRadius: 5,
@@ -104,10 +105,10 @@ let generalStyling = StyleSheet.create({
     color: "#0070f2",
     borderWidth: "0.8",
     borderColor: "gray",
-    marginTop: 15,
+    marginTop: 35,
     minWidth: 250,
-    paddingTop: 15,
-    paddingBottom: 15,
+    paddingTop: 20,
+    paddingBottom: 20,
     paddingLeft: 40,
     paddingRight: 40,
     borderRadius: 5,
