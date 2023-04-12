@@ -21,17 +21,15 @@ export default function MarkerModal({
 
   const changeContainer = () => {
     let updatedContainer = container;
-    updatedContainer.routeSelected = !changedContainer.routeSelected;
+    updatedContainer.routeSelected = container.routeSelected ? false : true;
+    // console.log("container som är selected", updatedContainer);
+    //console.log("markerModal Container", updatedContainer);
     setChangedContainer(updatedContainer);
-    handleSelectedContainer(changedContainer);
+    handleSelectedContainer(updatedContainer);
   };
 
   return (
-    <Modal
-      animationType="slide"
-      transparent={false}
-      visible={open}
-    >
+    <Modal animationType="slide" transparent={false} visible={open}>
       <View style={styles.modal}>
         <View>
           <View style={styles.containerName}>

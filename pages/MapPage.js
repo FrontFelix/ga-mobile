@@ -1,13 +1,23 @@
-import { View, Image, Text, TouchableOpacity } from "react-native";
+import {
+  View,
+  Image,
+  Text,
+  TouchableOpacity,
+  PanResponder,
+  Animated,
+} from "react-native";
 // import { SafeAreaView } from "react-native-safe-area-context";
 import MapView, { Polyline, Marker } from "react-native-maps";
 import MapMarker from "../components/MapMarker";
 import { useScannerContext } from "../contexts/ScannerContext";
 import { useEffect, useState } from "react";
 import * as Location from "expo-location";
+import DragableListItem from "../components/DragableListItem";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 export default function MapPage() {
   const { containers, routeLines, polyLineKey } = useScannerContext();
+  const [testContainers, setTestContainers] = useState(null);
   const [locationMark, setLocationMark] = useState();
   const [showLines, setShowLines] = useState(false);
   useEffect(() => {
@@ -18,24 +28,69 @@ export default function MapPage() {
     getLocation();
   }, [locationMark]);
 
+  // useEffect(() => {
+  //   setTestContainers(containers);
+  // }, [containers]);
+
+  // const panResponder = PanResponder.create({
+  //   onStartShouldSetPanResponder: () => true,
+  //   onPanResponderMove: (event, gesture) => {
+  //     // Uppdatera positionen för det dragade elementet
+  //     const newData = [...testContainers];
+  //     newData[draggedIndex].top = gesture.dy;
+  //     setTestContainers(newData);
+  //   },
+  //   onPanResponderRelease: () => {
+  //     // Återställ positionen för det dragade elementet
+  //     const newData = [...testContainers];
+  //     newData[draggedIndex].top = 0;
+  //     setTestContainers(newData);
+  //   },
+  // });
+
+  // let draggedIndex = null; // Index för det dragade elementet
+
   return (
     <View style={{ position: "relative" }}>
-      <TouchableOpacity
-        onPress={() => setShowLines(!showLines)}
+      {/* <View
         style={{
           position: "absolute",
-          top: 20,
-          backgroundColor: "rgb(255,255,255)",
-          fontSize: 15,
-          paddingTop: 60,
-          paddingBottom: 30,
           zIndex: 20,
-          textAlign: "center",
-          left: 0,
-          height: 40,
-          width: "100%",
+          top: 40,
+          left: 20,
+          padding: 20,
         }}
-      ></TouchableOpacity>
+      >
+        <GestureHandlerRootView
+          style={{ flex: 1, padding: 20, backgroundColor: "red" }}
+        >
+          <View style={{ flex: 1 }}>
+            {testContainers.map((item, index) => (
+              <TouchableOpacity
+                key={item.id}
+                onPress={() => console.log("Item pressed:", item.name)}
+                onLongPress={() => {
+                  // Sätta index för det dragade elementet när det hålls nere
+                  console.log("drar i item");
+                  draggedIndex = index;
+                }}
+                onPressOut={() => {
+                  // Nollställa index för det dragade elementet när det släpps
+                  draggedIndex = null;
+                }}
+                style={{
+                  backgroundColor: "white",
+                  padding: 16,
+                  marginTop: item.top,
+                }}
+                {...panResponder.panHandlers}
+              >
+                <Text>{item.name}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </GestureHandlerRootView>
+      </View> */}
       {containers.length > 0 && locationMark && (
         <MapView
           style={{ width: "100%", height: "100%" }}
@@ -54,16 +109,10 @@ export default function MapPage() {
               />
             </Marker>
             {containers.map((marker, index) => (
-              <MapMarker
-                key={index}
-                container={marker}
-              />
+              <MapMarker key={index} container={marker} />
             ))}
             {containers.map((marker, index) => (
-              <Polyline
-                strokeWidth={3}
-                coordinates={marker.marker}
-              />
+              <Polyline strokeWidth={3} coordinates={marker.marker} />
             ))}
           </View>
         </MapView>

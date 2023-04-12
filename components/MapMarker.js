@@ -32,16 +32,7 @@ export default function MapMarker({ container }) {
   }, []);
 
   const openModal = () => {
-    setContainer({
-      name: container.name,
-      categories: container.categories,
-      weight: container.weight,
-      agreement: container.agreement,
-      id: container.id,
-      routeSelected: container.routeSelected,
-      marker: container.marker,
-    });
-    console.log(container);
+    setContainer(container);
     setModalState(true);
   };
 

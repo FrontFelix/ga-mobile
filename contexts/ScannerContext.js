@@ -66,7 +66,7 @@ export const ScannerProvider = ({ children }) => {
     setPolyLineKey(polyLineKey + 1);
   };
 
-  const handleSelectedContainer = (container) => {
+  const handleSelectedContainer = async (container) => {
     let updatedList = containers.map((item) => {
       if (item.id === container.id) {
         return container;
@@ -74,7 +74,28 @@ export const ScannerProvider = ({ children }) => {
         return item;
       }
     });
-    console.log(updatedList);
+    //console.log("listan från selectedFunction", updatedList);
+    let mapList = [];
+    let noMapList = [];
+    for (item of updatedList) {
+      if (item.routeSelected) {
+        mapList.push(item);
+      } else {
+        noMapList.push(item);
+      }
+    }
+    let updatedMapList = await generateRoute(mapList);
+    for (item of noMapList) {
+      const updatedItem = {
+        ...item,
+        marker: [
+          { latitude: 0, longitude: 0 },
+          { latitude: 0, longitude: 0 },
+        ],
+      };
+      updatedMapList.push(updatedItem);
+    }
+    setContainers(updatedMapList);
   };
 
   const handleUpdateContainerScanning = async ({ type, data }) => {
@@ -117,57 +138,58 @@ export const ScannerProvider = ({ children }) => {
   };
 
   const generateRoute = async (containers) => {
-    let updatedContainers = await Promise.all(
-      containers.map(async (container) => {
-        // Skriver om objektet då vi inte behöver all information
-        const updatedItem = {
-          ...container,
-          // använder formeln som skapats för räkna avståndet.
-          distance: await haverSine(
-            container.location.lat,
-            container.location.long
-          ),
-        };
-        // Retunerar det nya objektet till vår lista.
-        return updatedItem;
-      })
-    );
-
-    // Sorterar listan från lägsta avståndet till längsta.
-    updatedContainers.sort((a, b) => a.distance - b.distance);
-    //Hämtar hem din position
+    const markersPosition = [];
     const { coords } = await Location.getCurrentPositionAsync({});
 
-    const markersPosition = updatedContainers.map((container, index) => {
-      // Skriver om objekten till arrays, för det behöver vi sedan i vår "PolyLine" från expo-map
+    let previousContainer = null; // Håller reda på föregående container
 
-      // Om index är 0 då ska vi först göra kordinaterna från mobilen till närmaste container eftersom vi sorterade listan förut.
-      if (index === 0) {
-        return [
-          {
-            latitude: coords.latitude,
-            longitude: coords.longitude,
-          },
-          {
-            latitude: container.location.lat,
-            longitude: container.location.long,
-          },
-        ];
-        // Om index är mer 0 då så räknar vi avståndet från senaste containern till nuvarande container. Därflr vi kör index-1
-      } else {
-        return [
-          {
-            latitude: updatedContainers[index - 1].location.lat,
-            longitude: updatedContainers[index - 1].location.long,
-          },
-          {
-            latitude: container.location.lat,
-            longitude: container.location.long,
-          },
-        ];
+    while (containers.length > 0) {
+      let closestContainer = null;
+      let closestDistance = null;
+
+      // Loopa igenom containrarna och jämför avstånden för att hitta närmaste
+      for (const container of containers) {
+        const distance = await haverSine(
+          previousContainer ? previousContainer.location.lat : coords.latitude,
+          previousContainer
+            ? previousContainer.location.long
+            : coords.longitude,
+          container.location.lat,
+          container.location.long
+        );
+
+        if (closestContainer === null || distance < closestDistance) {
+          closestContainer = container;
+          closestDistance = distance;
+        }
       }
-    });
-    // Retunerar den nya listan för våra polylines ( routes )
+
+      // Lägg till den närmaste containern i listan av markörpositioner
+      markersPosition.push({
+        ...closestContainer,
+        marker: [
+          {
+            latitude: previousContainer
+              ? previousContainer.location.lat
+              : coords.latitude,
+            longitude: previousContainer
+              ? previousContainer.location.long
+              : coords.longitude,
+          },
+          {
+            latitude: closestContainer.location.lat,
+            longitude: closestContainer.location.long,
+          },
+        ],
+      });
+
+      // Uppdatera previousContainer och ta bort den valda containern från listan med containrar
+      previousContainer = closestContainer;
+      containers = containers.filter(
+        (container) => container !== closestContainer
+      );
+    }
+
     return markersPosition;
   };
 
@@ -191,10 +213,7 @@ export const ScannerProvider = ({ children }) => {
           routeSelected: false,
         };
       });
-      console.log("containersFetch", updatedContainers);
-      const routes = await generateRoute(containersFetch);
-      setRouteLines(routes);
-      setContainers(containersFetch);
+      setContainers(updatedContainers);
     };
     asyncFetch();
     getBarCodeScannerPermissions();
