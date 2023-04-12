@@ -12,6 +12,7 @@ export default function BarCodeTest() {
     handleNewContainerScan,
     handleUpdateContainerScanning,
     handleScanClose,
+    handleCloseScanner,
     pickedUp,
   } = useScannerContext();
 
@@ -69,8 +70,16 @@ export default function BarCodeTest() {
             onBarCodeScanned={
               scannedCompleted ? undefined : handleNewContainerScanning
             }
-            style={{ minWidth: "100%", minHeight: "100%" }}
+            style={{ minWidth: "100%", minHeight: "80%" }}
           />
+          <Pressable
+            title="Stäng"
+            onPress={handleCloseScanner}
+            style={generalStyling.endButtonScanner}
+            alignItems="center"
+          >
+            <Text style={{ fontSize: 20, color: "gray" }}>Stäng scanner</Text>
+          </Pressable>
         </View>
       )}
       {isScanningData && (

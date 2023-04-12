@@ -16,6 +16,7 @@ export const ScannerContext = createContext({
   handleScanData: () => undefined,
   handleScanClose: () => undefined,
   handleCloseNewContainer: () => undefined,
+  handleCloseScanner: () => undefined,
   pickedUp: null,
   containers: [],
   haverSine: (lat1, lon1) => undefined,
@@ -56,6 +57,10 @@ export const ScannerProvider = ({ children }) => {
 
   const handleScanClose = () => {
     setIsScanning(false);
+  };
+
+  const handleCloseScanner = () => {
+    handleScanClose();
   };
 
   async function haverSine(lat1, lon1) {
