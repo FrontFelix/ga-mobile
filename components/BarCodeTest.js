@@ -24,17 +24,44 @@ export default function BarCodeTest() {
         minWidth: "100%",
       }}
     >
-      {!isNewContainerScanning && (
-        <Pressable
-          Text="Scanna"
-          onPress={handleNewContainerScan}
-          style={generalStyling.beginButtonScanner}
-          alignItems="center"
-        >
-          <Text style={{ color: "white", fontSize: 20 }}>Scanna</Text>
-        </Pressable>
-      )}
+      {isNewContainerScanning || isScanningData ? null : (
+        <View>
+          {!isNewContainerScanning && (
+            <Pressable
+              Text="Scanna ny container"
+              onPress={handleNewContainerScan}
+              style={generalStyling.beginButtonScanner}
+              alignItems="center"
+            >
+              <Text style={{ color: "white", fontSize: 20 }}>
+                Scanna container
+              </Text>
+            </Pressable>
+          )}
 
+          {!isScanningData && !pickedUp.pickedUp && (
+            <Pressable
+              Text="Scanna"
+              onPress={handleScanData}
+              style={generalStyling.beginButtonScanner}
+              alignItems="center"
+            >
+              <Text style={{ color: "white", fontSize: 20 }}>Scanna Data</Text>
+            </Pressable>
+          )}
+
+          <View style={{ margin: 10 }}>
+            <Pressable
+              title="Stäng"
+              onPress={handleScanClose}
+              style={generalStyling.endButtonScanner}
+              alignItems="center"
+            >
+              <Text style={{ fontSize: 20, color: "gray" }}>Stäng</Text>
+            </Pressable>
+          </View>
+        </View>
+      )}
       {isNewContainerScanning && (
         <View>
           {/* <Text>Här scannar du </Text> */}
@@ -42,21 +69,10 @@ export default function BarCodeTest() {
             onBarCodeScanned={
               scannedCompleted ? undefined : handleNewContainerScanning
             }
-            style={{ minWidth: "100%", minHeight: "80%" }}
+            style={{ minWidth: "100%", minHeight: "100%" }}
           />
         </View>
       )}
-      {!isScanningData && !pickedUp.pickedUp && (
-        <Pressable
-          Text="Scanna Data"
-          onPress={handleScanData}
-          style={generalStyling.beginButtonScanner}
-          alignItems="center"
-        >
-          <Text style={{ color: "white", fontSize: 20 }}>Scanna Data</Text>
-        </Pressable>
-      )}
-
       {isScanningData && (
         <View>
           {/* <Text>Här scannar du </Text> */}
@@ -68,16 +84,6 @@ export default function BarCodeTest() {
           />
         </View>
       )}
-      <View style={{ margin: 10 }}>
-        <Pressable
-          title="Stäng"
-          onPress={handleScanClose}
-          style={generalStyling.endButtonScanner}
-          alignItems="center"
-        >
-          <Text style={{ fontSize: 20, color: "gray" }}>Stäng</Text>
-        </Pressable>
-      </View>
     </View>
   );
 }
@@ -94,8 +100,9 @@ let generalStyling = StyleSheet.create({
     backgroundColor: "#092C4C",
     color: "white",
     minWidth: 250,
-    paddingTop: 15,
-    paddingBottom: 15,
+    marginBottom: 20,
+    paddingTop: 20,
+    paddingBottom: 20,
     paddingLeft: 40,
     paddingRight: 40,
     borderRadius: 5,
@@ -104,10 +111,10 @@ let generalStyling = StyleSheet.create({
     color: "#0070f2",
     borderWidth: "0.8",
     borderColor: "gray",
-    marginTop: 15,
+    marginTop: 35,
     minWidth: 250,
-    paddingTop: 15,
-    paddingBottom: 15,
+    paddingTop: 20,
+    paddingBottom: 20,
     paddingLeft: 40,
     paddingRight: 40,
     borderRadius: 5,

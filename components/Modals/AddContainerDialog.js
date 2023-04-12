@@ -76,11 +76,7 @@ export default function AddContainerDialog({
     // skicka request till neptune och vänta svar
   };
   return (
-    <Modal
-      animationType="slide"
-      transparent={false}
-      visible={dialogOpen}
-    >
+    <Modal animationType="slide" transparent={false} visible={dialogOpen}>
       <View style={generalStyling.container}>
         <View style={generalStyling.modalView}>
           {!showQR && !showSpinner && (
@@ -298,5 +294,6 @@ let generalStyling = StyleSheet.create({
     borderColor: "gray",
     padding: 10,
     borderRadius: 2,
+    marginBottom: 15,
   },
 });
