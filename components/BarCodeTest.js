@@ -13,6 +13,9 @@ export default function BarCodeTest() {
     handleNewContainerScan,
     handleUpdateContainerScanning,
     handleScanClose,
+    handleCloseScanner,
+    pickedUp,
+
   } = useScannerContext();
 
   const { hasActiveJob } = useTaskContext();
@@ -71,8 +74,16 @@ export default function BarCodeTest() {
             onBarCodeScanned={
               scannedCompleted ? undefined : handleNewContainerScanning
             }
-            style={{ minWidth: "100%", minHeight: "100%" }}
+            style={{ minWidth: "100%", minHeight: "95%" }}
           />
+          <Pressable
+            title="Stäng"
+            onPress={handleCloseScanner}
+            style={generalStyling.closeScannerButton}
+            alignItems="center"
+          >
+            <Text style={{ fontSize: 20, color: "gray" }}>X</Text>
+          </Pressable>
         </View>
       )}
       {isScanningData && (
@@ -111,14 +122,25 @@ let generalStyling = StyleSheet.create({
   },
   endButtonScanner: {
     color: "#0070f2",
-    borderWidth: "0.8",
+    borderWidth: 0.8,
     borderColor: "gray",
-    marginTop: 35,
     minWidth: 250,
+    marginBottom: 20,
     paddingTop: 20,
     paddingBottom: 20,
     paddingLeft: 40,
     paddingRight: 40,
     borderRadius: 5,
+  },
+
+  closeScannerButton: {
+    color: "#0070f2",
+    borderWidth: 0.8,
+    borderColor: "gray",
+    margin: 25,
+    minWidth: 60,
+    padding: 15,
+    borderRadius: 60,
+    position: "absolute",
   },
 });
