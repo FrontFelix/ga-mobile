@@ -16,7 +16,7 @@ export default function MarkerModal({
   locationAddress,
 }) {
   const [address, setAddress] = useState(null);
-  const { onContainerSelected } = useTaskContext();
+  const { onContainerSelected, hasActiveJob } = useTaskContext();
   const [changedContainer, setChangedContainer] = useState(container);
 
   const changeContainer = () => {
@@ -37,9 +37,9 @@ export default function MarkerModal({
           </View>
           <View style={styles.containerCategories}>
             <Text style={{ fontSize: 20 }}>Kategorier:</Text>
-            {container.categories.map((category) => {
+            {container.categories.map((category, index) => {
               return (
-                <Text style={{ fontWeight: "bold", fontSize: 20 }}>
+                <Text key={index} style={{ fontWeight: "bold", fontSize: 20 }}>
                   {category}
                 </Text>
               );
@@ -54,9 +54,16 @@ export default function MarkerModal({
             </Text>
           </View>
           <View style={styles.containerAddress}>
-            <TouchableOpacity onPress={changeContainer}>
+            <TouchableOpacity disabled={hasActiveJob} onPress={changeContainer}>
               <Text style={{ fontSize: 20 }}>
-                {container.routeSelected ? "Avmarkera" : "Markera"}
+                {hasActiveJob && "Du har redan skapat en rutt"}
+                {!hasActiveJob && !container.routeSelected && "Markera"}
+                {!hasActiveJob && container.routeSelected && "Avmarkera"}
+                {/* {hasActiveJob
+                  ? "Du har redan skapat en rutt."
+                  : container.routeSelected
+                  ? "Avmarkera"
+                  : "Markera"} */}
               </Text>
             </TouchableOpacity>
           </View>

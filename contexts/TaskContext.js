@@ -5,18 +5,28 @@ import { getContainers } from "../hooks/scannerHooks";
 export const TaskContext = createContext({
   markContainerAsEmpty: (container) => undefined,
   confirmRouteWithContainers: async (containers) => undefined,
-  onContainerSelected: async (container) => undefined,
+  onContainerSelected: async () => undefined,
   containers: [],
+  routeContainers: [],
   hasActiveJob: false,
 });
 
 export const TaskProvider = ({ children }) => {
   const [containers, setContainers] = useState([]);
   const [hasActiveJob, setActiveJob] = useState(false);
+  const [routeContainers, setRouteContainers] = useState([]);
 
   const markContainerAsEmpty = (container) => {};
 
-  const confirmRouteWithContainers = async (containers) => {};
+  const confirmRouteWithContainers = async () => {
+    const confirmedContainers = routeContainers.map((container) => {
+      return { ...container, empty: false };
+    });
+    setRouteContainers(confirmedContainers);
+    setActiveJob(true); // Sätter att man har ett job aktivt.
+
+    // Måste uppdatera varje container till Neptune
+  };
 
   const onContainerSelected = async (container) => {
     let updatedList = containers.map((item) => {
@@ -124,6 +134,13 @@ export const TaskProvider = ({ children }) => {
   useEffect(() => {
     loadContainers();
   }, []);
+
+  useEffect(() => {
+    const selectedContainers = containers.filter(
+      (container) => container.routeSelected === true
+    );
+    setRouteContainers(selectedContainers);
+  }, [containers]);
   return (
     <TaskContext.Provider
       value={{
@@ -132,6 +149,7 @@ export const TaskProvider = ({ children }) => {
         hasActiveJob,
         markContainerAsEmpty,
         onContainerSelected,
+        routeContainers,
       }}
     >
       {children}

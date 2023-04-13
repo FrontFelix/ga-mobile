@@ -14,8 +14,12 @@ import * as Location from "expo-location";
 import { useTaskContext } from "../contexts/TaskContext";
 
 export default function MapPage() {
-  const { containers } = useTaskContext();
-  const [testContainers, setTestContainers] = useState(null);
+  const {
+    containers,
+    hasActiveJob,
+    routeContainers,
+    confirmRouteWithContainers,
+  } = useTaskContext();
   const [locationMark, setLocationMark] = useState();
   const [showLines, setShowLines] = useState(false);
   useEffect(() => {
@@ -26,12 +30,11 @@ export default function MapPage() {
     getLocation();
   }, [locationMark]);
 
-  useEffect(() => {
-    const selectedContainers = containers.filter(
-      (container) => container.routeSelected === true
-    );
-    setTestContainers(selectedContainers);
-  }, [containers]);
+  const _handleConfirm = () => {
+    // if (!routeContainers.length || !routeContainers) {
+    //   return console.log("Ingen container selectad.");
+    // }
+  };
 
   return (
     <View style={{ position: "relative" }}>
@@ -46,29 +49,64 @@ export default function MapPage() {
         }}
       >
         <View style={{ flex: 1, padding: 20, gap: 10 }}>
-          <Text style={{ fontSize: 20 }}>Dina beräknade rutt</Text>
-          {testContainers !== null &&
-            testContainers.length > 0 &&
-            testContainers.map((container, index) => (
-              <View key={index}>
+          <Text style={{ fontSize: 20 }}>
+            {hasActiveJob ? "Din bekräftade rutt" : "Din beräknade rutt"}
+          </Text>
+          {routeContainers !== null &&
+            routeContainers.length > 0 &&
+            routeContainers.map((container, index) => (
+              <View
+                style={{
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  flexDirection: "row",
+                }}
+                key={index}
+              >
                 {/* Lägg till en unik nyckel för varje element */}
                 <Text>
                   {index + 1}. {container.name}
                 </Text>
+                {hasActiveJob && (
+                  <Text
+                    style={
+                      container.empty ? { color: "green" } : { color: "orange" }
+                    }
+                  >
+                    {container.empty ? "Tömd" : "Ej tömd"}
+                  </Text>
+                )}
               </View>
             ))}
-          <TouchableOpacity style={{ borderRadius: 40 }}>
+          <TouchableOpacity
+            onPress={confirmRouteWithContainers}
+            disabled={
+              hasActiveJob ? true : !routeContainers.length ? true : false
+            }
+            style={{ borderRadius: 40 }}
+          >
             <Text
-              style={{
-                backgroundColor: "#092C4C",
-                paddingHorizontal: 12,
-                paddingVertical: 4,
-                alignSelf: "flex-start",
-                borderRadius: 12,
-                color: "white",
-              }}
+              style={
+                hasActiveJob
+                  ? {
+                      backgroundColor: "orange",
+                      paddingHorizontal: 12,
+                      paddingVertical: 4,
+                      alignSelf: "flex-start",
+                      borderRadius: 12,
+                      color: "white",
+                    }
+                  : {
+                      backgroundColor: "#092C4C",
+                      paddingHorizontal: 12,
+                      paddingVertical: 4,
+                      alignSelf: "flex-start",
+                      borderRadius: 12,
+                      color: "white",
+                    }
+              }
             >
-              Bekräfta rutt
+              {!hasActiveJob ? "Bekräfta rutt." : "Avbryt jobb."}
             </Text>
           </TouchableOpacity>
         </View>
