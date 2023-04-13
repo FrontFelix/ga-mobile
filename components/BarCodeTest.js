@@ -70,7 +70,7 @@ export default function BarCodeTest() {
             onBarCodeScanned={
               scannedCompleted ? undefined : handleNewContainerScanning
             }
-            style={{ minWidth: "100%", minHeight: "80%" }}
+            style={{ minWidth: "100%", minHeight: "95%" }}
           />
           <Pressable
             title="Stäng"
