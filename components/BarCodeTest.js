@@ -75,7 +75,7 @@ export default function BarCodeTest() {
           <Pressable
             title="Stäng"
             onPress={handleCloseScanner}
-            style={generalStyling.endButtonScanner}
+            style={generalStyling.closeScannerButton}
             alignItems="center"
           >
             <Text style={{ fontSize: 20, color: "gray" }}>X</Text>
@@ -117,6 +117,19 @@ let generalStyling = StyleSheet.create({
     borderRadius: 5,
   },
   endButtonScanner: {
+    color: "#0070f2",
+    borderWidth: 0.8,
+    borderColor: "gray",
+    minWidth: 250,
+    marginBottom: 20,
+    paddingTop: 20,
+    paddingBottom: 20,
+    paddingLeft: 40,
+    paddingRight: 40,
+    borderRadius: 5,
+  },
+
+  closeScannerButton: {
     color: "#0070f2",
     borderWidth: 0.8,
     borderColor: "gray",
