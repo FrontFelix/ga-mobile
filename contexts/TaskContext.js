@@ -3,7 +3,7 @@ import * as Location from "expo-location";
 import { haverSine } from "../hooks/mathHooks";
 import { getContainers } from "../hooks/scannerHooks";
 export const TaskContext = createContext({
-  markContainerAsEmpty: (container) => undefined,
+  markContainerAsEmpty: (containerID) => undefined,
   confirmRouteWithContainers: async (containers) => undefined,
   onContainerSelected: async () => undefined,
   containers: [],
@@ -16,7 +16,27 @@ export const TaskProvider = ({ children }) => {
   const [hasActiveJob, setActiveJob] = useState(false);
   const [routeContainers, setRouteContainers] = useState([]);
 
-  const markContainerAsEmpty = (container) => {};
+  const markContainerAsEmpty = (containerID) => {
+    const existingContainer = routeContainers.find(
+      (item) => item.id === containerID
+    );
+    if (existingContainer && !existingContainer.empty) {
+      const updatedArray = routeContainers.map((container) => {
+        if (container.id === containerID) {
+          return { ...container, empty: true };
+        } else {
+          return container;
+        }
+      });
+      setRouteContainers(updatedArray);
+    } else {
+      if (existingContainer.empty) {
+        console.log("Container redan tömd...");
+      } else if (!existingContainer) {
+        console.log("finns ingen container");
+      }
+    }
+  };
 
   const confirmRouteWithContainers = async () => {
     const confirmedContainers = routeContainers.map((container) => {

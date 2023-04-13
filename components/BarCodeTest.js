@@ -5,17 +5,12 @@ import { useTaskContext } from "../contexts/TaskContext";
 
 export default function BarCodeTest() {
   const {
-    isNewContainerScanning,
-    isScanningData,
     scannedCompleted,
     handleNewContainerScanning,
-    handleScanData,
-    handleNewContainerScan,
     handleUpdateContainerScanning,
-    handleScanClose,
-    handleCloseScanner,
-    pickedUp,
-
+    isAddScan,
+    isContainerScan,
+    _closeScanner,
   } = useScannerContext();
 
   const { hasActiveJob } = useTaskContext();
@@ -29,9 +24,9 @@ export default function BarCodeTest() {
         minWidth: "100%",
       }}
     >
-      {isNewContainerScanning || isScanningData ? null : (
+      {/* {isAddScan || isContainerScan ? null : (
         <View>
-          {!isNewContainerScanning && (
+          {!isAddScan && (
             <Pressable
               Text="Scanna ny container"
               onPress={handleNewContainerScan}
@@ -44,7 +39,7 @@ export default function BarCodeTest() {
             </Pressable>
           )}
 
-          {!isScanningData && !hasActiveJob && (
+          {!isAddScan && !hasActiveJob && (
             <Pressable
               Text="Scanna"
               onPress={handleScanData}
@@ -58,7 +53,7 @@ export default function BarCodeTest() {
           <View style={{ margin: 10 }}>
             <Pressable
               title="Stäng"
-              onPress={handleScanClose}
+              onPress={() => _closeScanner("data")}
               style={generalStyling.endButtonScanner}
               alignItems="center"
             >
@@ -67,9 +62,8 @@ export default function BarCodeTest() {
           </View>
         </View>
       )}
-      {isNewContainerScanning && (
+      {isAddScan && (
         <View>
-          {/* <Text>Här scannar du </Text> */}
           <BarCodeScanner
             onBarCodeScanned={
               scannedCompleted ? undefined : handleNewContainerScanning
@@ -78,7 +72,7 @@ export default function BarCodeTest() {
           />
           <Pressable
             title="Stäng"
-            onPress={handleCloseScanner}
+            onPress={() => _closeScanner("add")}
             style={generalStyling.closeScannerButton}
             alignItems="center"
           >
@@ -86,17 +80,7 @@ export default function BarCodeTest() {
           </Pressable>
         </View>
       )}
-      {isScanningData && (
-        <View>
-          {/* <Text>Här scannar du </Text> */}
-          <BarCodeScanner
-            onBarCodeScanned={
-              scannedCompleted ? undefined : handleUpdateContainerScanning
-            }
-            style={{ minWidth: "100%", minHeight: "80%" }}
-          />
-        </View>
-      )}
+      Här ska koden som ligger längst ner ligga om vi fortfarande vill använda den... */}
     </View>
   );
 }
@@ -144,3 +128,17 @@ let generalStyling = StyleSheet.create({
     position: "absolute",
   },
 });
+
+// {
+//   isContainerScan && (
+//     <View>
+//       {/* <Text>Här scannar du </Text> */}
+//       <BarCodeScanner
+//         onBarCodeScanned={
+//           scannedCompleted ? undefined : handleUpdateContainerScanning
+//         }
+//         style={{ minWidth: "100%", minHeight: "80%" }}
+//       />
+//     </View>
+//   );
+// }

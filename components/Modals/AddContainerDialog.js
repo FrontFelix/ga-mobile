@@ -13,6 +13,7 @@ import {
 import MultiSelect from "react-native-multiple-select";
 import AxfoodQRCode from "../AxfoodQRCode";
 import QRCode from "react-native-qrcode-svg";
+import { useScannerContext } from "../../contexts/ScannerContext";
 export default function AddContainerDialog({
   children,
   beginButtonTitle,
@@ -21,11 +22,11 @@ export default function AddContainerDialog({
   closeDialogFunction,
   size,
   dialogTitle,
-  handleCloseNewContainer,
 }) {
   const [showSpinner, setShowSpinner] = useState(false);
   const [showQR, setShowQR] = useState(false);
   const [containerID, setContainerID] = useState(null);
+  const { handleCloseNewContainer } = useScannerContext();
 
   const {
     handleSubmit,
