@@ -9,14 +9,12 @@ import {
 // import { SafeAreaView } from "react-native-safe-area-context";
 import MapView, { Polyline, Marker } from "react-native-maps";
 import MapMarker from "../components/MapMarker";
-import { useScannerContext } from "../contexts/ScannerContext";
 import { useEffect, useState } from "react";
 import * as Location from "expo-location";
-import DragableListItem from "../components/DragableListItem";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { useTaskContext } from "../contexts/TaskContext";
 
 export default function MapPage() {
-  const { containers, routeLines, polyLineKey } = useScannerContext();
+  const { containers } = useTaskContext();
   const [testContainers, setTestContainers] = useState(null);
   const [locationMark, setLocationMark] = useState();
   const [showLines, setShowLines] = useState(false);
@@ -28,69 +26,53 @@ export default function MapPage() {
     getLocation();
   }, [locationMark]);
 
-  // useEffect(() => {
-  //   setTestContainers(containers);
-  // }, [containers]);
-
-  // const panResponder = PanResponder.create({
-  //   onStartShouldSetPanResponder: () => true,
-  //   onPanResponderMove: (event, gesture) => {
-  //     // Uppdatera positionen för det dragade elementet
-  //     const newData = [...testContainers];
-  //     newData[draggedIndex].top = gesture.dy;
-  //     setTestContainers(newData);
-  //   },
-  //   onPanResponderRelease: () => {
-  //     // Återställ positionen för det dragade elementet
-  //     const newData = [...testContainers];
-  //     newData[draggedIndex].top = 0;
-  //     setTestContainers(newData);
-  //   },
-  // });
-
-  // let draggedIndex = null; // Index för det dragade elementet
+  useEffect(() => {
+    const selectedContainers = containers.filter(
+      (container) => container.routeSelected === true
+    );
+    setTestContainers(selectedContainers);
+  }, [containers]);
 
   return (
     <View style={{ position: "relative" }}>
-      {/* <View
+      <View
         style={{
           position: "absolute",
           zIndex: 20,
           top: 40,
-          left: 20,
-          padding: 20,
+          left: 0,
+          backgroundColor: "white",
+          width: "60%",
         }}
       >
-        <GestureHandlerRootView
-          style={{ flex: 1, padding: 20, backgroundColor: "red" }}
-        >
-          <View style={{ flex: 1 }}>
-            {testContainers.map((item, index) => (
-              <TouchableOpacity
-                key={item.id}
-                onPress={() => console.log("Item pressed:", item.name)}
-                onLongPress={() => {
-                  // Sätta index för det dragade elementet när det hålls nere
-                  console.log("drar i item");
-                  draggedIndex = index;
-                }}
-                onPressOut={() => {
-                  // Nollställa index för det dragade elementet när det släpps
-                  draggedIndex = null;
-                }}
-                style={{
-                  backgroundColor: "white",
-                  padding: 16,
-                  marginTop: item.top,
-                }}
-                {...panResponder.panHandlers}
-              >
-                <Text>{item.name}</Text>
-              </TouchableOpacity>
+        <View style={{ flex: 1, padding: 20, gap: 10 }}>
+          <Text style={{ fontSize: 20 }}>Dina beräknade rutt</Text>
+          {testContainers !== null &&
+            testContainers.length > 0 &&
+            testContainers.map((container, index) => (
+              <View key={index}>
+                {/* Lägg till en unik nyckel för varje element */}
+                <Text>
+                  {index + 1}. {container.name}
+                </Text>
+              </View>
             ))}
-          </View>
-        </GestureHandlerRootView>
-      </View> */}
+          <TouchableOpacity style={{ borderRadius: 40 }}>
+            <Text
+              style={{
+                backgroundColor: "#092C4C",
+                paddingHorizontal: 12,
+                paddingVertical: 4,
+                alignSelf: "flex-start",
+                borderRadius: 12,
+                color: "white",
+              }}
+            >
+              Bekräfta rutt
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </View>
       {containers.length > 0 && locationMark && (
         <MapView
           style={{ width: "100%", height: "100%" }}
@@ -112,7 +94,11 @@ export default function MapPage() {
               <MapMarker key={index} container={marker} />
             ))}
             {containers.map((marker, index) => (
-              <Polyline strokeWidth={3} coordinates={marker.marker} />
+              <Polyline
+                key={index}
+                strokeWidth={3}
+                coordinates={marker.marker}
+              />
             ))}
           </View>
         </MapView>

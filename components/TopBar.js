@@ -1,8 +1,9 @@
 import { Image, Text, View } from "react-native";
 import { useScannerContext } from "../contexts/ScannerContext";
+import { useTaskContext } from "../contexts/TaskContext";
 
 export default function TopBar() {
-  const { pickedUp } = useScannerContext();
+  const { hasActiveJob } = useTaskContext();
   return (
     <View
       style={{
@@ -19,9 +20,9 @@ export default function TopBar() {
           <Text>Emil Hagelin</Text>
         </View>
         <Text>
-          {!pickedUp.pickedUp
+          {!hasActiveJob
             ? "Du har inte aktiva uppdrag"
-            : `Du har låst ${pickedUp.containerID}`}
+            : `Du har ett aktivt uppdrag`}
         </Text>
       </View>
       <Text style={{ fontSize: 20 }}>Axfood</Text>

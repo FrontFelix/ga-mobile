@@ -26,7 +26,6 @@ export default function MapMarker({ container }) {
         longitude: container.location.long,
       });
       await setLocationAddress(addressResponse[0].name);
-      console.log("markerLocation", locationAddress);
     };
     asyncSetAddress();
   }, []);

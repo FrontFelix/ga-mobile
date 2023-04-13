@@ -8,7 +8,7 @@ import {
 } from "react-native";
 import * as Location from "expo-location";
 import { useEffect, useState } from "react";
-import { useScannerContext } from "../../contexts/ScannerContext";
+import { useTaskContext } from "../../contexts/TaskContext";
 export default function MarkerModal({
   open,
   closeDialog,
@@ -16,7 +16,7 @@ export default function MarkerModal({
   locationAddress,
 }) {
   const [address, setAddress] = useState(null);
-  const { handleSelectedContainer } = useScannerContext();
+  const { onContainerSelected } = useTaskContext();
   const [changedContainer, setChangedContainer] = useState(container);
 
   const changeContainer = () => {
@@ -25,7 +25,7 @@ export default function MarkerModal({
     // console.log("container som är selected", updatedContainer);
     //console.log("markerModal Container", updatedContainer);
     setChangedContainer(updatedContainer);
-    handleSelectedContainer(updatedContainer);
+    onContainerSelected(updatedContainer);
   };
 
   return (
@@ -33,7 +33,7 @@ export default function MarkerModal({
       <View style={styles.modal}>
         <View>
           <View style={styles.containerName}>
-            <Text style={{ fontSize: "30" }}>Container: {container.name}</Text>
+            <Text style={{ fontSize: 30 }}>Container: {container.name}</Text>
           </View>
           <View style={styles.containerCategories}>
             <Text style={{ fontSize: 20 }}>Kategorier:</Text>

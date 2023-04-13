@@ -17,29 +17,19 @@ export const ScannerContext = createContext({
   handleScanData: () => undefined,
   handleScanClose: () => undefined,
   handleCloseNewContainer: () => undefined,
-  pickedUp: null,
-  containers: [],
-  generateRoute: async (containers) => undefined,
   routeLines: null,
   polyLineKey: 0,
-  handleUpdateRoute: () => undefined,
-  handleSelectedContainer: (container) => undefined,
 });
 
 export const ScannerProvider = ({ children }) => {
   const [scannedCompleted, setScannedCompleted] = useState(false); // Om scanningen är completed
   const [isNewContainerScanning, setIsNewContainerScanning] = useState(false); // Om den ska scanna
   const [polyLineKey, setPolyLineKey] = useState(0);
-  const [pickedUp, setPickedUp] = useState({
-    pickedUp: false,
-    containerID: "",
-  });
   const [isScanningData, setIsScanningData] = useState(false);
   const [hasCameraPermission, setHasCameraPermission] = useState(null);
   const [hasLocationPermission, setHasLocationPermission] = useState(null);
   const [barCodeData, setBarCodeData] = useState(null);
   const [newContainerDialog, setNewContainerDialog] = useState(false);
-  const [containers, setContainers] = useState([]);
   const [routeLines, setRouteLines] = useState(null);
 
   const closeNewContainerDialog = () => {
@@ -60,42 +50,6 @@ export const ScannerProvider = ({ children }) => {
 
   const handleScanClose = () => {
     setIsScanning(false);
-  };
-
-  const handleUpdateRoute = () => {
-    setPolyLineKey(polyLineKey + 1);
-  };
-
-  const handleSelectedContainer = async (container) => {
-    let updatedList = containers.map((item) => {
-      if (item.id === container.id) {
-        return container;
-      } else {
-        return item;
-      }
-    });
-    //console.log("listan från selectedFunction", updatedList);
-    let mapList = [];
-    let noMapList = [];
-    for (item of updatedList) {
-      if (item.routeSelected) {
-        mapList.push(item);
-      } else {
-        noMapList.push(item);
-      }
-    }
-    let updatedMapList = await generateRoute(mapList);
-    for (item of noMapList) {
-      const updatedItem = {
-        ...item,
-        marker: [
-          { latitude: 0, longitude: 0 },
-          { latitude: 0, longitude: 0 },
-        ],
-      };
-      updatedMapList.push(updatedItem);
-    }
-    setContainers(updatedMapList);
   };
 
   const handleUpdateContainerScanning = async ({ type, data }) => {
@@ -137,62 +91,6 @@ export const ScannerProvider = ({ children }) => {
     // Öppna upp dialogen för att lägga till container...
   };
 
-  const generateRoute = async (containers) => {
-    const markersPosition = [];
-    const { coords } = await Location.getCurrentPositionAsync({});
-
-    let previousContainer = null; // Håller reda på föregående container
-
-    while (containers.length > 0) {
-      let closestContainer = null;
-      let closestDistance = null;
-
-      // Loopa igenom containrarna och jämför avstånden för att hitta närmaste
-      for (const container of containers) {
-        const distance = await haverSine(
-          previousContainer ? previousContainer.location.lat : coords.latitude,
-          previousContainer
-            ? previousContainer.location.long
-            : coords.longitude,
-          container.location.lat,
-          container.location.long
-        );
-
-        if (closestContainer === null || distance < closestDistance) {
-          closestContainer = container;
-          closestDistance = distance;
-        }
-      }
-
-      // Lägg till den närmaste containern i listan av markörpositioner
-      markersPosition.push({
-        ...closestContainer,
-        marker: [
-          {
-            latitude: previousContainer
-              ? previousContainer.location.lat
-              : coords.latitude,
-            longitude: previousContainer
-              ? previousContainer.location.long
-              : coords.longitude,
-          },
-          {
-            latitude: closestContainer.location.lat,
-            longitude: closestContainer.location.long,
-          },
-        ],
-      });
-
-      // Uppdatera previousContainer och ta bort den valda containern från listan med containrar
-      previousContainer = closestContainer;
-      containers = containers.filter(
-        (container) => container !== closestContainer
-      );
-    }
-
-    return markersPosition;
-  };
-
   useEffect(() => {
     const getBarCodeScannerPermissions = async () => {
       const { cameraStatus } = await BarCodeScanner.requestPermissionsAsync();
@@ -201,21 +99,6 @@ export const ScannerProvider = ({ children }) => {
       setHasLocationPermission(locationStatus === "granted");
       setHasCameraPermission(cameraStatus === "granted");
     };
-    const asyncFetch = async () => {
-      const containersFetch = await getContainers();
-      const updatedContainers = containersFetch.map((container) => {
-        return {
-          ...container,
-          marker: [
-            { latitude: 0, longitude: 0 },
-            { latitude: 0, longitude: 0 },
-          ],
-          routeSelected: false,
-        };
-      });
-      setContainers(updatedContainers);
-    };
-    asyncFetch();
     getBarCodeScannerPermissions();
   }, []);
 
@@ -232,14 +115,8 @@ export const ScannerProvider = ({ children }) => {
         handleScanClose,
         handleCloseNewContainer,
         handleUpdateContainerScanning,
-        containers,
-        pickedUp,
-        haverSine,
-        generateRoute,
         routeLines,
         polyLineKey,
-        handleUpdateRoute,
-        handleSelectedContainer,
       }}
     >
       {children}
@@ -249,6 +126,7 @@ export const ScannerProvider = ({ children }) => {
         endButtonTitle="Stäng"
         dialogOpen={newContainerDialog}
         closeDialogFunction={closeNewContainerDialog}
+        handleCloseNewContainer={handleCloseNewContainer}
         size="large"
       ></AddContainerDialog>
     </ScannerContext.Provider>
