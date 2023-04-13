@@ -8,6 +8,7 @@ import {
 } from "react-native";
 import * as Location from "expo-location";
 import { useEffect, useState } from "react";
+import { useTaskContext } from "../../contexts/TaskContext";
 export default function MarkerModal({
   open,
   closeDialog,
@@ -15,12 +16,24 @@ export default function MarkerModal({
   locationAddress,
 }) {
   const [address, setAddress] = useState(null);
+  const { onContainerSelected } = useTaskContext();
+  const [changedContainer, setChangedContainer] = useState(container);
+
+  const changeContainer = () => {
+    let updatedContainer = container;
+    updatedContainer.routeSelected = container.routeSelected ? false : true;
+    // console.log("container som är selected", updatedContainer);
+    //console.log("markerModal Container", updatedContainer);
+    setChangedContainer(updatedContainer);
+    onContainerSelected(updatedContainer);
+  };
+
   return (
     <Modal animationType="slide" transparent={false} visible={open}>
       <View style={styles.modal}>
         <View>
           <View style={styles.containerName}>
-            <Text style={{ fontSize: "30" }}>Container: {container.name}</Text>
+            <Text style={{ fontSize: 30 }}>Container: {container.name}</Text>
           </View>
           <View style={styles.containerCategories}>
             <Text style={{ fontSize: 20 }}>Kategorier:</Text>
@@ -39,6 +52,13 @@ export default function MarkerModal({
             <Text style={{ fontSize: 20 }}>
               Adress: {locationAddress && locationAddress}
             </Text>
+          </View>
+          <View style={styles.containerAddress}>
+            <TouchableOpacity onPress={changeContainer}>
+              <Text style={{ fontSize: 20 }}>
+                {container.routeSelected ? "Avmarkera" : "Markera"}
+              </Text>
+            </TouchableOpacity>
           </View>
         </View>
         <View style={styles.closeContainerDialog}>

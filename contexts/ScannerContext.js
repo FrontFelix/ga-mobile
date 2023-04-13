@@ -3,6 +3,7 @@ import { BarCodeScanner } from "expo-barcode-scanner";
 import AddContainerDialog from "../components/Modals/AddContainerDialog";
 import * as Location from "expo-location";
 import { updateContainerStatus, getContainers } from "../hooks/scannerHooks";
+import { haverSine } from "../hooks/mathHooks";
 
 export const ScannerContext = createContext({
   scannedCompleted: false,
@@ -20,23 +21,19 @@ export const ScannerContext = createContext({
   pickedUp: null,
   containers: [],
   haverSine: (lat1, lon1) => undefined,
-  generateRoute: async (containers) => undefined,
   routeLines: null,
+  polyLineKey: 0,
 });
 
 export const ScannerProvider = ({ children }) => {
   const [scannedCompleted, setScannedCompleted] = useState(false); // Om scanningen är completed
   const [isNewContainerScanning, setIsNewContainerScanning] = useState(false); // Om den ska scanna
-  const [pickedUp, setPickedUp] = useState({
-    pickedUp: false,
-    containerID: "",
-  });
+  const [polyLineKey, setPolyLineKey] = useState(0);
   const [isScanningData, setIsScanningData] = useState(false);
   const [hasCameraPermission, setHasCameraPermission] = useState(null);
   const [hasLocationPermission, setHasLocationPermission] = useState(null);
   const [barCodeData, setBarCodeData] = useState(null);
   const [newContainerDialog, setNewContainerDialog] = useState(false);
-  const [containers, setContainers] = useState([]);
   const [routeLines, setRouteLines] = useState(null);
 
   const closeNewContainerDialog = () => {
@@ -129,62 +126,6 @@ export const ScannerProvider = ({ children }) => {
     // Öppna upp dialogen för att lägga till container...
   };
 
-  const generateRoute = async (containers) => {
-    let updatedContainers = await Promise.all(
-      containers.map(async (container) => {
-        // Skriver om objektet då vi inte behöver all information
-        const updatedItem = {
-          name: container.name,
-          location: container.location,
-          // använder formeln som skapats för räkna avståndet.
-          distance: await haverSine(
-            container.location.lat,
-            container.location.long
-          ),
-        };
-        // Retunerar det nya objektet till vår lista.
-        return updatedItem;
-      })
-    );
-
-    // Sorterar listan från lägsta avståndet till längsta.
-    updatedContainers.sort((a, b) => a.distance - b.distance);
-    //Hämtar hem din position
-    const { coords } = await Location.getCurrentPositionAsync({});
-
-    const markersPosition = updatedContainers.map((container, index) => {
-      // Skriver om objekten till arrays, för det behöver vi sedan i vår "PolyLine" från expo-map
-
-      // Om index är 0 då ska vi först göra kordinaterna från mobilen till närmaste container eftersom vi sorterade listan förut.
-      if (index === 0) {
-        return [
-          {
-            latitude: coords.latitude,
-            longitude: coords.longitude,
-          },
-          {
-            latitude: container.location.lat,
-            longitude: container.location.long,
-          },
-        ];
-        // Om index är mer 0 då så räknar vi avståndet från senaste containern till nuvarande container. Därflr vi kör index-1
-      } else {
-        return [
-          {
-            latitude: updatedContainers[index - 1].location.lat,
-            longitude: updatedContainers[index - 1].location.long,
-          },
-          {
-            latitude: container.location.lat,
-            longitude: container.location.long,
-          },
-        ];
-      }
-    });
-    // Retunerar den nya listan för våra polylines ( routes )
-    return markersPosition;
-  };
-
   useEffect(() => {
     const getBarCodeScannerPermissions = async () => {
       const { cameraStatus } = await BarCodeScanner.requestPermissionsAsync();
@@ -193,13 +134,6 @@ export const ScannerProvider = ({ children }) => {
       setHasLocationPermission(locationStatus === "granted");
       setHasCameraPermission(cameraStatus === "granted");
     };
-    const asyncFetch = async () => {
-      const containersFetch = await getContainers();
-      const routes = await generateRoute(containersFetch);
-      setRouteLines(routes);
-      setContainers(containersFetch);
-    };
-    asyncFetch();
     getBarCodeScannerPermissions();
   }, []);
 
@@ -216,12 +150,10 @@ export const ScannerProvider = ({ children }) => {
         handleScanClose,
         handleCloseNewContainer,
         handleUpdateContainerScanning,
-        containers,
-        pickedUp,
-        haverSine,
-        generateRoute,
         routeLines,
         handleCloseScanner,
+        polyLineKey,
+
       }}
     >
       {children}
@@ -231,6 +163,7 @@ export const ScannerProvider = ({ children }) => {
         endButtonTitle="Stäng"
         dialogOpen={newContainerDialog}
         closeDialogFunction={closeNewContainerDialog}
+        handleCloseNewContainer={handleCloseNewContainer}
         size="large"
       ></AddContainerDialog>
     </ScannerContext.Provider>

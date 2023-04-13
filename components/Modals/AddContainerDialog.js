@@ -21,6 +21,7 @@ export default function AddContainerDialog({
   closeDialogFunction,
   size,
   dialogTitle,
+  handleCloseNewContainer,
 }) {
   const [showSpinner, setShowSpinner] = useState(false);
   const [showQR, setShowQR] = useState(false);
@@ -189,6 +190,7 @@ export default function AddContainerDialog({
               <View>
                 {containerID !== null && (
                   <AxfoodQRCode
+                    handleCloseNewContainer={handleCloseNewContainer}
                     content={JSON.stringify({ containerID: containerID })}
                   />
                 )}

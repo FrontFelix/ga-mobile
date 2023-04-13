@@ -1,6 +1,7 @@
 import { View, Button, Text, StyleSheet, Pressable } from "react-native";
 import { BarCodeScanner } from "expo-barcode-scanner";
 import { useScannerContext } from "../contexts/ScannerContext";
+import { useTaskContext } from "../contexts/TaskContext";
 
 export default function BarCodeTest() {
   const {
@@ -14,7 +15,10 @@ export default function BarCodeTest() {
     handleScanClose,
     handleCloseScanner,
     pickedUp,
+
   } = useScannerContext();
+
+  const { hasActiveJob } = useTaskContext();
 
   return (
     <View
@@ -40,7 +44,7 @@ export default function BarCodeTest() {
             </Pressable>
           )}
 
-          {!isScanningData && !pickedUp.pickedUp && (
+          {!isScanningData && !hasActiveJob && (
             <Pressable
               Text="Scanna"
               onPress={handleScanData}

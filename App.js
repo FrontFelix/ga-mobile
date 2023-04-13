@@ -8,6 +8,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import HomePage from "./pages/HomePage";
 import { StatusBar } from "expo-status-bar";
 import * as MediaLibrary from "expo-media-library";
+import { TaskProvider } from "./contexts/TaskContext";
 
 const Stack = createNativeStackNavigator();
 
@@ -24,15 +25,17 @@ export default function App() {
   return (
     <NavigationContainer>
       <StatusBar />
-      <ScannerProvider>
-        <Stack.Navigator>
-          <Stack.Screen
-            options={{ headerShown: false }}
-            name="BottomNavbar"
-            component={BottomNavbar}
-          />
-        </Stack.Navigator>
-      </ScannerProvider>
+      <TaskProvider>
+        <ScannerProvider>
+          <Stack.Navigator>
+            <Stack.Screen
+              options={{ headerShown: false }}
+              name="BottomNavbar"
+              component={BottomNavbar}
+            />
+          </Stack.Navigator>
+        </ScannerProvider>
+      </TaskProvider>
     </NavigationContainer>
   );
 }

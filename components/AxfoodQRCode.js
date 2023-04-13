@@ -4,11 +4,14 @@ import QRCode from "react-native-qrcode-svg";
 import { captureRef } from "react-native-view-shot";
 import ViewShot from "react-native-view-shot";
 import * as MediaLibrary from "expo-media-library";
-import { useScannerContext } from "../contexts/ScannerContext";
 
-export default function AxFoodQRCode({ content, image }) {
+export default function AxFoodQRCode({
+  content,
+  image,
+  handleCloseNewContainer,
+}) {
   const viewShotRef = useRef(null);
-  const { handleScanClose, handleCloseNewContainer } = useScannerContext();
+  // const { handleCloseNewContainer } = useScannerContext();
 
   const saveQRCode = async () => {
     try {
