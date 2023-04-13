@@ -78,7 +78,7 @@ export default function BarCodeTest() {
             style={generalStyling.endButtonScanner}
             alignItems="center"
           >
-            <Text style={{ fontSize: 20, color: "gray" }}>Stäng scanner</Text>
+            <Text style={{ fontSize: 20, color: "gray" }}>X</Text>
           </Pressable>
         </View>
       )}
@@ -118,14 +118,12 @@ let generalStyling = StyleSheet.create({
   },
   endButtonScanner: {
     color: "#0070f2",
-    borderWidth: "0.8",
+    borderWidth: 0.8,
     borderColor: "gray",
-    marginTop: 35,
-    minWidth: 250,
-    paddingTop: 20,
-    paddingBottom: 20,
-    paddingLeft: 40,
-    paddingRight: 40,
-    borderRadius: 5,
+    margin: 25,
+    minWidth: 60,
+    padding: 15,
+    borderRadius: 60,
+    position: "absolute",
   },
 });
