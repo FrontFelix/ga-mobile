@@ -60,7 +60,7 @@ export const ScannerProvider = ({ children }) => {
   };
 
   const handleCloseScanner = () => {
-    handleScanClose();
+    setIsNewContainerScanning(false);
   };
 
   async function haverSine(lat1, lon1) {
@@ -221,6 +221,7 @@ export const ScannerProvider = ({ children }) => {
         haverSine,
         generateRoute,
         routeLines,
+        handleCloseScanner,
       }}
     >
       {children}
