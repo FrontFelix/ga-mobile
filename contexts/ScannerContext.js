@@ -3,7 +3,6 @@ import { BarCodeScanner } from "expo-barcode-scanner";
 import AddContainerDialog from "../components/Modals/AddContainerDialog";
 import * as Location from "expo-location";
 import { updateContainerStatus, getContainers } from "../hooks/scannerHooks";
-import { haverSine } from "../hooks/mathHooks";
 
 export const ScannerContext = createContext({
   scannedCompleted: false,

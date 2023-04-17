@@ -19,9 +19,10 @@ export default function MapPage() {
     hasActiveJob,
     routeContainers,
     confirmRouteWithContainers,
+    hasCompletedJob,
+    confirmCompletedJob,
   } = useTaskContext();
   const [locationMark, setLocationMark] = useState();
-  const [showLines, setShowLines] = useState(false);
   useEffect(() => {
     async function getLocation() {
       const { coords } = await Location.getCurrentPositionAsync({});
@@ -38,79 +39,95 @@ export default function MapPage() {
 
   return (
     <View style={{ position: "relative" }}>
-      <View
-        style={{
-          position: "absolute",
-          zIndex: 20,
-          top: 40,
-          left: 0,
-          backgroundColor: "white",
-          width: "60%",
-        }}
-      >
-        <View style={{ flex: 1, padding: 20, gap: 10 }}>
-          <Text style={{ fontSize: 20 }}>
-            {hasActiveJob ? "Din bekräftade rutt" : "Din beräknade rutt"}
-          </Text>
-          {routeContainers !== null &&
-            routeContainers.length > 0 &&
-            routeContainers.map((container, index) => (
-              <View
-                style={{
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  flexDirection: "row",
-                }}
-                key={index}
-              >
-                {/* Lägg till en unik nyckel för varje element */}
-                <Text>
-                  {index + 1}. {container.name}
-                </Text>
-                {hasActiveJob && (
-                  <Text
-                    style={
-                      container.empty ? { color: "green" } : { color: "orange" }
-                    }
-                  >
-                    {container.empty ? "Tömd" : "Ej tömd"}
-                  </Text>
-                )}
-              </View>
-            ))}
-          <TouchableOpacity
-            onPress={confirmRouteWithContainers}
-            disabled={
-              hasActiveJob ? true : !routeContainers.length ? true : false
-            }
-            style={{ borderRadius: 40 }}
-          >
-            <Text
-              style={
-                hasActiveJob
-                  ? {
-                      backgroundColor: "orange",
-                      paddingHorizontal: 12,
-                      paddingVertical: 4,
-                      alignSelf: "flex-start",
-                      borderRadius: 12,
-                      color: "white",
-                    }
-                  : {
-                      backgroundColor: "#092C4C",
-                      paddingHorizontal: 12,
-                      paddingVertical: 4,
-                      alignSelf: "flex-start",
-                      borderRadius: 12,
-                      color: "white",
-                    }
-              }
-            >
-              {!hasActiveJob ? "Bekräfta rutt." : "Avbryt jobb."}
+      {routeContainers.length > 0 && (
+        <View
+          style={{
+            position: "absolute",
+            zIndex: 20,
+            top: 40,
+            left: 0,
+            backgroundColor: "white",
+            width: "60%",
+          }}
+        >
+          <View style={{ flex: 1, padding: 20, gap: 10 }}>
+            <Text style={{ fontSize: 20 }}>
+              {hasActiveJob ? "Din bekräftade rutt" : "Din beräknade rutt"}
             </Text>
-          </TouchableOpacity>
+            {routeContainers !== null &&
+              routeContainers.length > 0 &&
+              routeContainers.map((container, index) => (
+                <View
+                  style={{
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    flexDirection: "row",
+                  }}
+                  key={index}
+                >
+                  {/* Lägg till en unik nyckel för varje element */}
+                  <Text>
+                    {index + 1}. {container.name}
+                  </Text>
+                  {hasActiveJob && (
+                    <Text
+                      style={
+                        container.empty
+                          ? { color: "green" }
+                          : { color: "orange" }
+                      }
+                    >
+                      {container.empty ? "Tömd" : "Ej tömd"}
+                    </Text>
+                  )}
+                </View>
+              ))}
+            <TouchableOpacity
+              onPress={
+                hasActiveJob ? confirmCompletedJob : confirmRouteWithContainers
+              }
+              style={{ borderRadius: 40 }}
+            >
+              <Text
+                style={
+                  hasCompletedJob
+                    ? {
+                        backgroundColor: "green",
+                        paddingHorizontal: 12,
+                        paddingVertical: 4,
+                        alignSelf: "flex-start",
+                        borderRadius: 12,
+                        color: "white",
+                      }
+                    : hasActiveJob
+                    ? {
+                        backgroundColor: "orange",
+                        paddingHorizontal: 12,
+                        paddingVertical: 4,
+                        alignSelf: "flex-start",
+                        borderRadius: 12,
+                        color: "white",
+                      }
+                    : {
+                        backgroundColor: "#092C4C",
+                        paddingHorizontal: 12,
+                        paddingVertical: 4,
+                        alignSelf: "flex-start",
+                        borderRadius: 12,
+                        color: "white",
+                      }
+                }
+              >
+                {hasCompletedJob
+                  ? "Bekräfta avslutat jobb."
+                  : hasActiveJob
+                  ? "Avbryt jobb."
+                  : "Bekräfta rutt."}
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
-      </View>
+      )}
       {containers.length > 0 && locationMark && (
         <MapView
           style={{ width: "100%", height: "100%" }}
@@ -129,7 +146,10 @@ export default function MapPage() {
               />
             </Marker>
             {containers.map((marker, index) => (
-              <MapMarker key={index} container={marker} />
+              <MapMarker
+                key={index}
+                container={marker}
+              />
             ))}
             {containers.map((marker, index) => (
               <Polyline
@@ -140,6 +160,11 @@ export default function MapPage() {
             ))}
           </View>
         </MapView>
+      )}
+      {!containers.length && !locationMark && (
+        <View>
+          <Text>Laddar karta....</Text>
+        </View>
       )}
     </View>
   );

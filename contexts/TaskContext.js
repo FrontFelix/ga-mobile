@@ -5,16 +5,38 @@ import { getContainers } from "../hooks/scannerHooks";
 export const TaskContext = createContext({
   markContainerAsEmpty: (containerID) => undefined,
   confirmRouteWithContainers: async (containers) => undefined,
+  confirmCompletedJob: () => undefined,
   onContainerSelected: async () => undefined,
   containers: [],
   routeContainers: [],
   hasActiveJob: false,
+  hasCompletedJob: false,
 });
 
 export const TaskProvider = ({ children }) => {
   const [containers, setContainers] = useState([]);
   const [hasActiveJob, setActiveJob] = useState(false);
+  const [hasCompletedJob, setCompletedJob] = useState(false);
   const [routeContainers, setRouteContainers] = useState([]);
+
+  const confirmCompletedJob = () => {
+    const updatedContainers = containers.map((item) => {
+      const updatedItem = {
+        ...item,
+        marker: [
+          { latitude: 0, longitude: 0 },
+          { latitude: 0, longitude: 0 },
+        ],
+      };
+      return updatedItem;
+    });
+    setContainers(updatedContainers);
+    setActiveJob(false);
+    setCompletedJob(false);
+    setRouteContainers([]);
+    console.log("route längd", routeContainers.length);
+    console.log("route array", routeContainers);
+  };
 
   const markContainerAsEmpty = (containerID) => {
     const existingContainer = routeContainers.find(
@@ -78,6 +100,11 @@ export const TaskProvider = ({ children }) => {
       updatedMapList.push(updatedItem);
     }
     setContainers(updatedMapList);
+    const selectedContainers = containers.filter(
+      (container) => container.routeSelected === true
+    );
+    setRouteContainers(selectedContainers);
+    console.log("Ändrar rutt", routeContainers);
   };
   const generateRouteWithContainers = async (containers) => {
     const markersPosition = [];
@@ -156,11 +183,15 @@ export const TaskProvider = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    const selectedContainers = containers.filter(
-      (container) => container.routeSelected === true
-    );
-    setRouteContainers(selectedContainers);
-  }, [containers]);
+    if (
+      routeContainers.length &&
+      routeContainers.every((item) => item.empty === true)
+    ) {
+      setCompletedJob(true);
+      console.log("alla är tömda", routeContainers);
+    }
+  }, [routeContainers]);
+
   return (
     <TaskContext.Provider
       value={{
@@ -170,6 +201,8 @@ export const TaskProvider = ({ children }) => {
         markContainerAsEmpty,
         onContainerSelected,
         routeContainers,
+        hasCompletedJob,
+        confirmCompletedJob,
       }}
     >
       {children}
