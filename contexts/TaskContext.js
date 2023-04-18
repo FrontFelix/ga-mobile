@@ -6,7 +6,7 @@ export const TaskContext = createContext({
   markContainerAsEmpty: (containerID) => undefined,
   confirmRouteWithContainers: async (containers) => undefined,
   confirmCompletedJob: () => undefined,
-  onContainerSelected: async () => undefined,
+  onContainerSelected: async (container, setSpinner) => undefined,
   containers: [],
   routeContainers: [],
   hasActiveJob: false,
@@ -70,7 +70,9 @@ export const TaskProvider = ({ children }) => {
     // Måste uppdatera varje container till Neptune
   };
 
-  const onContainerSelected = async (container) => {
+  const onContainerSelected = async (container, setSpinner) => {
+    setSpinner(true);
+    console.log("spinner aktiv...");
     let updatedList = containers.map((item) => {
       if (item.id === container.id) {
         return container;
@@ -105,6 +107,8 @@ export const TaskProvider = ({ children }) => {
     );
     setRouteContainers(selectedContainers);
     console.log("Ändrar rutt", routeContainers);
+    console.log("spinner inte aktiv");
+    setSpinner(false);
   };
   const generateRouteWithContainers = async (containers) => {
     const markersPosition = [];

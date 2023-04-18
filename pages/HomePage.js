@@ -22,6 +22,7 @@ export default function HomePage() {
             <RouteCard
               container={container}
               index={index}
+              key={index}
               length={routeContainers.length}
             />
           ))}

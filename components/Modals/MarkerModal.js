@@ -5,6 +5,7 @@ import {
   Text,
   TouchableOpacity,
   Pressable,
+  ActivityIndicator,
 } from "react-native";
 import * as Location from "expo-location";
 import { useEffect, useState } from "react";
@@ -17,19 +18,22 @@ export default function MarkerModal({
 }) {
   const [address, setAddress] = useState(null);
   const { onContainerSelected, hasActiveJob } = useTaskContext();
+  const [isRoute, setIsRoute] = useState(false);
   const [changedContainer, setChangedContainer] = useState(container);
 
   const changeContainer = () => {
     let updatedContainer = container;
     updatedContainer.routeSelected = container.routeSelected ? false : true;
-    // console.log("container som är selected", updatedContainer);
-    //console.log("markerModal Container", updatedContainer);
     setChangedContainer(updatedContainer);
-    onContainerSelected(updatedContainer);
+    onContainerSelected(updatedContainer, setIsRoute);
   };
 
   return (
-    <Modal animationType="slide" transparent={false} visible={open}>
+    <Modal
+      animationType="slide"
+      transparent={false}
+      visible={open}
+    >
       <View style={styles.modal}>
         <View>
           <View style={styles.containerName}>
@@ -39,7 +43,10 @@ export default function MarkerModal({
             <Text style={{ fontSize: 20 }}>Kategorier:</Text>
             {container.categories.map((category, index) => {
               return (
-                <Text key={index} style={{ fontWeight: "bold", fontSize: 20 }}>
+                <Text
+                  key={index}
+                  style={{ fontWeight: "bold", fontSize: 20 }}
+                >
                   {category}
                 </Text>
               );
@@ -54,25 +61,33 @@ export default function MarkerModal({
             </Text>
           </View>
           <View style={styles.containerAddress}>
-            <TouchableOpacity disabled={hasActiveJob} onPress={changeContainer}>
-              <Text style={{ fontSize: 20 }}>
-                {hasActiveJob && "Du har redan skapat en rutt"}
-                {!hasActiveJob && !container.routeSelected && "Markera"}
-                {!hasActiveJob && container.routeSelected && "Avmarkera"}
-                {/* {hasActiveJob
-                  ? "Du har redan skapat en rutt."
-                  : container.routeSelected
-                  ? "Avmarkera"
-                  : "Markera"} */}
-              </Text>
+            <TouchableOpacity
+              disabled={hasActiveJob}
+              onPress={changeContainer}
+            >
+              {!isRoute && (
+                <Text style={{ fontSize: 20 }}>
+                  {hasActiveJob && "Du har redan skapat en rutt"}
+                  {!hasActiveJob && !container.routeSelected && "Markera"}
+                  {!hasActiveJob && container.routeSelected && "Avmarkera"}
+                  {/* {hasActiveJob
+                                ? "Du har redan skapat en rutt."
+                                : container.routeSelected
+                                ? "Avmarkera"
+                                : "Markera"} */}
+                </Text>
+              )}
+              {isRoute && <ActivityIndicator size={"large"} />}
             </TouchableOpacity>
           </View>
         </View>
-        <View style={styles.closeContainerDialog}>
-          <TouchableOpacity onPress={closeDialog}>
-            <Text style={{ fontSize: 20, color: "gray" }}>Stäng</Text>
-          </TouchableOpacity>
-        </View>
+        {!isRoute && (
+          <View style={styles.closeContainerDialog}>
+            <TouchableOpacity onPress={closeDialog}>
+              <Text style={{ fontSize: 20, color: "gray" }}>Stäng</Text>
+            </TouchableOpacity>
+          </View>
+        )}
       </View>
     </Modal>
   );

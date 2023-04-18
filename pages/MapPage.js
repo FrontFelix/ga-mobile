@@ -12,6 +12,7 @@ import MapMarker from "../components/MapMarker";
 import { useEffect, useState } from "react";
 import * as Location from "expo-location";
 import { useTaskContext } from "../contexts/TaskContext";
+import Swiper from "react-native-swiper";
 
 export default function MapPage() {
   const {
@@ -44,44 +45,55 @@ export default function MapPage() {
           style={{
             position: "absolute",
             zIndex: 20,
-            top: 40,
+            bottom: 40,
             left: 0,
-            backgroundColor: "white",
-            width: "60%",
+            width: "100%",
           }}
         >
           <View style={{ flex: 1, padding: 20, gap: 10 }}>
-            <Text style={{ fontSize: 20 }}>
+            <Text style={{ fontSize: 20, textAlign: "center" }}>
               {hasActiveJob ? "Din bekräftade rutt" : "Din beräknade rutt"}
             </Text>
-            {routeContainers !== null &&
-              routeContainers.length > 0 &&
-              routeContainers.map((container, index) => (
-                <View
-                  style={{
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    flexDirection: "row",
-                  }}
-                  key={index}
-                >
-                  {/* Lägg till en unik nyckel för varje element */}
-                  <Text>
-                    {index + 1}. {container.name}
-                  </Text>
-                  {hasActiveJob && (
-                    <Text
-                      style={
-                        container.empty
-                          ? { color: "green" }
-                          : { color: "orange" }
-                      }
-                    >
-                      {container.empty ? "Tömd" : "Ej tömd"}
+            <Swiper
+              height={100}
+              loop={false}
+              style={{ justifyContent: "center" }}
+            >
+              {routeContainers !== null &&
+                routeContainers.length > 0 &&
+                routeContainers.map((container, index) => (
+                  <View
+                    style={{
+                      backgroundColor: "white",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      flexDirection: "row",
+                      flex: 1,
+                      width: "80%",
+                      borderRadius: 10,
+                      marginLeft: 34,
+                      padding: 12,
+                    }}
+                    key={index}
+                  >
+                    {/* Lägg till en unik nyckel för varje element */}
+                    <Text>
+                      {index + 1}. {container.name}
                     </Text>
-                  )}
-                </View>
-              ))}
+                    {hasActiveJob && (
+                      <Text
+                        style={
+                          container.empty
+                            ? { color: "green" }
+                            : { color: "orange" }
+                        }
+                      >
+                        {container.empty ? "Tömd" : "Ej tömd"}
+                      </Text>
+                    )}
+                  </View>
+                ))}
+            </Swiper>
             <TouchableOpacity
               onPress={
                 hasActiveJob ? confirmCompletedJob : confirmRouteWithContainers
@@ -95,7 +107,7 @@ export default function MapPage() {
                         backgroundColor: "green",
                         paddingHorizontal: 12,
                         paddingVertical: 4,
-                        alignSelf: "flex-start",
+                        alignSelf: "center",
                         borderRadius: 12,
                         color: "white",
                       }
@@ -104,7 +116,7 @@ export default function MapPage() {
                         backgroundColor: "orange",
                         paddingHorizontal: 12,
                         paddingVertical: 4,
-                        alignSelf: "flex-start",
+                        alignSelf: "center",
                         borderRadius: 12,
                         color: "white",
                       }
@@ -112,7 +124,7 @@ export default function MapPage() {
                         backgroundColor: "#092C4C",
                         paddingHorizontal: 12,
                         paddingVertical: 4,
-                        alignSelf: "flex-start",
+                        alignSelf: "center",
                         borderRadius: 12,
                         color: "white",
                       }
