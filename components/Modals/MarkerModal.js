@@ -29,11 +29,7 @@ export default function MarkerModal({
   };
 
   return (
-    <Modal
-      animationType="slide"
-      transparent={false}
-      visible={open}
-    >
+    <Modal animationType="slide" transparent={false} visible={open}>
       <View style={styles.modal}>
         <View>
           <View style={styles.containerName}>
@@ -43,10 +39,7 @@ export default function MarkerModal({
             <Text style={{ fontSize: 20 }}>Kategorier:</Text>
             {container.categories.map((category, index) => {
               return (
-                <Text
-                  key={index}
-                  style={{ fontWeight: "bold", fontSize: 20 }}
-                >
+                <Text key={index} style={{ fontWeight: "bold", fontSize: 20 }}>
                   {category}
                 </Text>
               );
@@ -61,12 +54,23 @@ export default function MarkerModal({
             </Text>
           </View>
           <View style={styles.containerAddress}>
-            <TouchableOpacity
-              disabled={hasActiveJob}
-              onPress={changeContainer}
-            >
+            <TouchableOpacity disabled={hasActiveJob} onPress={changeContainer}>
               {!isRoute && (
-                <Text style={{ fontSize: 20 }}>
+                <Text
+                  style={{
+                    fontSize: 20,
+                    color: "#FAFAFA",
+                    borderWidth: "0.8",
+                    backgroundColor: "#092C4C",
+                    marginTop: 15,
+                    paddingTop: 15,
+                    paddingBottom: 15,
+                    paddingLeft: 40,
+                    paddingRight: 40,
+                    borderRadius: 5,
+                    textAlign: "center",
+                  }}
+                >
                   {hasActiveJob && "Du har redan skapat en rutt"}
                   {!hasActiveJob && !container.routeSelected && "Markera"}
                   {!hasActiveJob && container.routeSelected && "Avmarkera"}
