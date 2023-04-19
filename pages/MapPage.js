@@ -77,9 +77,9 @@ export default function MapPage() {
                     <View>
                       <Text
                         style={{
-                          fontSize: 15,
+                          fontSize: 16,
                           textAlign: "center",
-                          marginBottom: 25,
+                          marginBottom: 35,
                         }}
                       >
                         {hasActiveJob
@@ -88,20 +88,28 @@ export default function MapPage() {
                       </Text>
                     </View>
                     <View>
-                      <Text style={{ fontSize: 15 }}>
-                        {index + 1}. {container.name}
-                      </Text>
-                      {hasActiveJob && (
-                        <Text
-                          style={
-                            container.empty
-                              ? { color: "green" }
-                              : { color: "orange" }
-                          }
-                        >
-                          {container.empty ? "Tömd" : "Ej tömd"}
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          gap: 10,
+                          alignItems: "center",
+                        }}
+                      >
+                        <Text style={{ fontSize: 15 }}>
+                          {index + 1}. {container.name}:
                         </Text>
-                      )}
+                        {hasActiveJob && (
+                          <Text
+                            style={
+                              container.empty
+                                ? { color: "green", fontSize: 15 }
+                                : { color: "orange", fontSize: 15 }
+                            }
+                          >
+                            {container.empty ? "Tömd" : "Ej tömd"}
+                          </Text>
+                        )}
+                      </View>
                     </View>
                   </View>
                 ))}
@@ -142,7 +150,6 @@ export default function MapPage() {
                           alignSelf: "center",
                           borderRadius: 12,
                           color: "white",
-                          width: 150,
                           textAlign: "center",
                         }
                   }
