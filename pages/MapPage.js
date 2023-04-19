@@ -51,11 +51,8 @@ export default function MapPage() {
           }}
         >
           <View style={{ flex: 1, padding: 20, gap: 10 }}>
-            <Text style={{ fontSize: 20, textAlign: "center" }}>
-              {hasActiveJob ? "Din bekräftade rutt" : "Din beräknade rutt"}
-            </Text>
             <Swiper
-              height={100}
+              height={150}
               loop={false}
               style={{ justifyContent: "center" }}
             >
@@ -65,78 +62,99 @@ export default function MapPage() {
                   <View
                     style={{
                       backgroundColor: "white",
-                      justifyContent: "space-between",
+                      flexDirection: "column",
                       alignItems: "center",
-                      flexDirection: "row",
                       flex: 1,
                       width: "80%",
+
                       borderRadius: 10,
                       marginLeft: 34,
-                      padding: 12,
+                      padding: 14,
                     }}
                     key={index}
                   >
                     {/* Lägg till en unik nyckel för varje element */}
-                    <Text>
-                      {index + 1}. {container.name}
-                    </Text>
-                    {hasActiveJob && (
+                    <View>
                       <Text
-                        style={
-                          container.empty
-                            ? { color: "green" }
-                            : { color: "orange" }
-                        }
+                        style={{
+                          fontSize: 15,
+                          textAlign: "center",
+                          marginBottom: 25,
+                        }}
                       >
-                        {container.empty ? "Tömd" : "Ej tömd"}
+                        {hasActiveJob
+                          ? "Din bekräftade rutt"
+                          : "Din beräknade rutt"}
                       </Text>
-                    )}
+                    </View>
+                    <View>
+                      <Text style={{ fontSize: 15 }}>
+                        {index + 1}. {container.name}
+                      </Text>
+                      {hasActiveJob && (
+                        <Text
+                          style={
+                            container.empty
+                              ? { color: "green" }
+                              : { color: "orange" }
+                          }
+                        >
+                          {container.empty ? "Tömd" : "Ej tömd"}
+                        </Text>
+                      )}
+                    </View>
                   </View>
                 ))}
             </Swiper>
-            <TouchableOpacity
-              onPress={
-                hasActiveJob ? confirmCompletedJob : confirmRouteWithContainers
-              }
-              style={{ borderRadius: 40 }}
-            >
-              <Text
-                style={
-                  hasCompletedJob
-                    ? {
-                        backgroundColor: "green",
-                        paddingHorizontal: 12,
-                        paddingVertical: 4,
-                        alignSelf: "center",
-                        borderRadius: 12,
-                        color: "white",
-                      }
-                    : hasActiveJob
-                    ? {
-                        backgroundColor: "orange",
-                        paddingHorizontal: 12,
-                        paddingVertical: 4,
-                        alignSelf: "center",
-                        borderRadius: 12,
-                        color: "white",
-                      }
-                    : {
-                        backgroundColor: "#092C4C",
-                        paddingHorizontal: 12,
-                        paddingVertical: 4,
-                        alignSelf: "center",
-                        borderRadius: 12,
-                        color: "white",
-                      }
+            <View style={{}}>
+              <TouchableOpacity
+                onPress={
+                  hasActiveJob
+                    ? confirmCompletedJob
+                    : confirmRouteWithContainers
                 }
+                style={{ borderRadius: 40 }}
               >
-                {hasCompletedJob
-                  ? "Bekräfta avslutat jobb."
-                  : hasActiveJob
-                  ? "Avbryt jobb."
-                  : "Bekräfta rutt."}
-              </Text>
-            </TouchableOpacity>
+                <Text
+                  style={
+                    hasCompletedJob
+                      ? {
+                          backgroundColor: "green",
+                          paddingHorizontal: 12,
+                          paddingVertical: 4,
+                          alignSelf: "center",
+                          borderRadius: 12,
+                          color: "white",
+                        }
+                      : hasActiveJob
+                      ? {
+                          backgroundColor: "orange",
+                          paddingHorizontal: 12,
+                          paddingVertical: 4,
+                          alignSelf: "center",
+                          borderRadius: 12,
+                          color: "white",
+                        }
+                      : {
+                          backgroundColor: "#092C4C",
+                          paddingHorizontal: 12,
+                          paddingVertical: 4,
+                          alignSelf: "center",
+                          borderRadius: 12,
+                          color: "white",
+                          width: 150,
+                          textAlign: "center",
+                        }
+                  }
+                >
+                  {hasCompletedJob
+                    ? "Bekräfta avslutat jobb"
+                    : hasActiveJob
+                    ? "Avbryt jobb"
+                    : "Bekräfta rutt"}
+                </Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
       )}
@@ -158,10 +176,7 @@ export default function MapPage() {
               />
             </Marker>
             {containers.map((marker, index) => (
-              <MapMarker
-                key={index}
-                container={marker}
-              />
+              <MapMarker key={index} container={marker} />
             ))}
             {containers.map((marker, index) => (
               <Polyline
