@@ -13,6 +13,7 @@ import { useEffect, useState } from "react";
 import * as Location from "expo-location";
 import { useTaskContext } from "../contexts/TaskContext";
 import Swiper from "react-native-swiper";
+import { MaterialIcons } from "@expo/vector-icons";
 
 export default function MapPage() {
   const {
@@ -22,6 +23,7 @@ export default function MapPage() {
     confirmRouteWithContainers,
     hasCompletedJob,
     confirmCompletedJob,
+    onContainerSelected,
   } = useTaskContext();
   const [locationMark, setLocationMark] = useState();
   useEffect(() => {
@@ -36,6 +38,13 @@ export default function MapPage() {
     // if (!routeContainers.length || !routeContainers) {
     //   return console.log("Ingen container selectad.");
     // }
+  };
+
+  const removeFromRoute = (container) => {
+    let updatedContainer = container;
+    updatedContainer.routeSelected = false;
+    console.log("mapPageContainer", updatedContainer);
+    onContainerSelected(updatedContainer);
   };
 
   return (
@@ -96,7 +105,7 @@ export default function MapPage() {
                         }}
                       >
                         <Text style={{ fontSize: 15 }}>
-                          {index + 1}. {container.name}:
+                          {index + 1}. {container.name}
                         </Text>
                         {hasActiveJob && (
                           <Text
@@ -110,6 +119,27 @@ export default function MapPage() {
                           </Text>
                         )}
                       </View>
+                      <TouchableOpacity
+                        style={{
+                          flexDirection: "row",
+                          alignItems: "center",
+                          gap: 5,
+                          backgroundColor: "#ff726f",
+                          paddingHorizontal: 8,
+                          borderRadius: 3,
+                          paddingVertical: 4,
+                        }}
+                        onPress={() => removeFromRoute(container)}
+                      >
+                        <Text style={{ color: "white" }}>
+                          Ta bort från rutt
+                        </Text>
+                        <MaterialIcons
+                          name="delete-outline"
+                          size={24}
+                          color="white"
+                        />
+                      </TouchableOpacity>
                     </View>
                   </View>
                 ))}
@@ -183,7 +213,10 @@ export default function MapPage() {
               />
             </Marker>
             {containers.map((marker, index) => (
-              <MapMarker key={index} container={marker} />
+              <MapMarker
+                key={index}
+                container={marker}
+              />
             ))}
             {containers.map((marker, index) => (
               <Polyline

@@ -71,8 +71,13 @@ export const TaskProvider = ({ children }) => {
   };
 
   const onContainerSelected = async (container, setSpinner) => {
-    setSpinner(true);
-    console.log("spinner aktiv...");
+    if (setSpinner) {
+      console.log("spinner aktiv...");
+      setSpinner(true);
+    }
+
+    console.log("ändrar container", container);
+
     let updatedList = containers.map((item) => {
       if (item.id === container.id) {
         return container;
@@ -101,14 +106,18 @@ export const TaskProvider = ({ children }) => {
       };
       updatedMapList.push(updatedItem);
     }
+
+    console.log("map containers", updatedMapList);
     setContainers(updatedMapList);
-    const selectedContainers = containers.filter(
+    const selectedContainers = updatedMapList.filter(
       (container) => container.routeSelected === true
     );
     setRouteContainers(selectedContainers);
-    console.log("Ändrar rutt", routeContainers);
+    console.log("selectade containers", selectedContainers);
     console.log("spinner inte aktiv");
-    setSpinner(false);
+    if (setSpinner) {
+      setSpinner(false);
+    }
   };
   const generateRouteWithContainers = async (containers) => {
     const markersPosition = [];

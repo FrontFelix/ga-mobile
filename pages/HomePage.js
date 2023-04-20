@@ -1,14 +1,32 @@
 import { StatusBar } from "expo-status-bar";
 import { Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { haverSine } from "../hooks/mathHooks";
 import TopBar from "../components/TopBar";
 import RouteCard from "../components/RouteCard";
 import { useTaskContext } from "../contexts/TaskContext";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export default function HomePage() {
+  const [totalDistance, setTotalDistance] = useState(0);
+
   useEffect(() => {
     console.log(routeContainers);
+
+    const getDistance = async () => {
+      let count = 0;
+      for (let container of routeContainers) {
+        let Updateddistance = await haverSine(
+          container.location.lat,
+          container.location.long
+        );
+        Updateddistance = Updateddistance / 1000;
+        Updateddistance = Math.round(Updateddistance);
+        count += Updateddistance;
+      }
+      setTotalDistance(count);
+    };
+    getDistance();
   }, [routeContainers]);
 
   const { routeContainers } = useTaskContext();
@@ -26,6 +44,9 @@ export default function HomePage() {
               length={routeContainers.length}
             />
           ))}
+        {routeContainers !== null && routeContainers.length > 0 && (
+          <Text>Total körväg {totalDistance}km</Text>
+        )}
       </View>
     </SafeAreaView>
   );

@@ -1,4 +1,4 @@
-import { View, Text } from "react-native";
+import { View, Text, Linking } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { Feather } from "@expo/vector-icons";
 import { useEffect, useState } from "react";
@@ -40,7 +40,14 @@ export default function RouteCard({ container, index, length }) {
         <Text style={{ color: "white" }}>
           {container.empty ? "Tömd" : "Ej tömd"}
         </Text>
-        <TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => {
+            const lat = container.location.lat;
+            const long = container.location.long;
+            const url = `https://www.google.com/maps/search/?api=1&query=${lat},${long}`;
+            Linking.openURL(url);
+          }}
+        >
           <Feather
             name="map"
             size={24}
