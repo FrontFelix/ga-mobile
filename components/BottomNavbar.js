@@ -5,14 +5,13 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import HomePage from "../pages/HomePage";
 import MapPage from "../pages/MapPage";
 import ContainerPage from "../pages/ContainerPage";
+import InventoryPage from "../pages/InventoryPage";
 export default function BottomNavbar() {
   const Tab = createBottomTabNavigator();
   return (
     <Tab.Navigator
       screenOptions={{ headerShown: false, tabBarShowLabel: false }}
       initialRouteName="Home"
-      
-
     >
       <Tab.Screen
         name="Home"
@@ -21,6 +20,19 @@ export default function BottomNavbar() {
           tabBarIcon: ({ focused }) => (
             <MaterialCommunityIcons
               name={focused ? "clipboard-list" : "clipboard-list-outline"}
+              size={30}
+              color={focused ? "#0070f2" : "black"}
+            />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Inventory"
+        component={InventoryPage}
+        options={{
+          tabBarIcon: ({ focused }) => (
+            <MaterialCommunityIcons
+              name={focused ? "shoppingcart" : "shoppingcart-outline"}
               size={30}
               color={focused ? "#0070f2" : "black"}
             />
@@ -40,6 +52,7 @@ export default function BottomNavbar() {
           ),
         }}
       />
+
       <Tab.Screen
         name="Containers"
         component={ContainerPage}
