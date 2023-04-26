@@ -32,7 +32,7 @@ export default function BottomNavbar() {
         options={{
           tabBarIcon: ({ focused }) => (
             <MaterialCommunityIcons
-              name={focused ? "shoppingcart" : "shoppingcart-outline"}
+              name={focused ? "shopping" : "shopping-outline"}
               size={30}
               color={focused ? "#0070f2" : "black"}
             />
