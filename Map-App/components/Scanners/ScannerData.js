@@ -45,7 +45,7 @@ export default function ScannerData() {
           {/* <Text>Här scannar du </Text> */}
           <BarCodeScanner
             onBarCodeScanned={scannedCompleted ? undefined : handleScan}
-            style={{ minWidth: "100%", minHeight: "80%" }}
+            style={{ minWidth: "100%", minHeight: "90%" }}
           />
         </View>
       ) : (

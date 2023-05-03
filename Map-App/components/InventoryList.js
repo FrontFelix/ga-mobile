@@ -48,15 +48,16 @@ export default function InventoryList() {
                 <Text style={{ color: "#FAFAFA", marginBottom: 4 }}>
                   {product.name}
                 </Text>
-                <Text style={{ color: "green" }}>
-                  I lager:{" "}
+                <Text style={{ color: product.stock > 10 ? "green" : "gray" }}>
+                  Finns{" "}
                   {product.stock > 10
-                    ? "I lager"
+                    ? "i lager"
                     : product.stock > 5 && product.stock < 10
-                    ? "Hyfsat"
-                    : "Inget"}
+                    ? "få kvar i lager"
+                    : "ej i lager"}
                 </Text>
               </View>
+
               <View
                 style={{
                   flexDirection: "row",
