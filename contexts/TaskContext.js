@@ -1,7 +1,7 @@
 import { createContext, useState, useEffect, useContext } from "react";
 import * as Location from "expo-location";
 import { haverSine } from "../hooks/mathHooks";
-import { getContainers } from "../hooks/scannerHooks";
+import { getContainers, getProducts } from "../hooks/scannerHooks";
 export const TaskContext = createContext({
   markContainerAsEmpty: (containerID) => undefined,
   confirmRouteWithContainers: async (containers) => undefined,
@@ -11,6 +11,9 @@ export const TaskContext = createContext({
   routeContainers: [],
   hasActiveJob: false,
   hasCompletedJob: false,
+  products: [],
+  scannedProducts: [],
+  addScannedProduct: (product) => undefined,
 });
 
 export const TaskProvider = ({ children }) => {
@@ -18,6 +21,15 @@ export const TaskProvider = ({ children }) => {
   const [hasActiveJob, setActiveJob] = useState(false);
   const [hasCompletedJob, setCompletedJob] = useState(false);
   const [routeContainers, setRouteContainers] = useState([]);
+  const [products, setProducts] = useState([]);
+  const [scannedProducts, setScannedProducts] = useState([]);
+
+  const addScannedProduct = (product) => {
+    console.log("data läggs tilll....", product);
+    const scannedList = scannedProducts;
+    scannedList.push(product);
+    setScannedProducts(scannedList);
+  };
 
   const confirmCompletedJob = () => {
     const updatedContainers = containers.map((item) => {
@@ -190,9 +202,16 @@ export const TaskProvider = ({ children }) => {
     setContainers(updatedContainers);
   };
 
+  const loadProducts = async () => {
+    const productsFetch = await getProducts();
+    console.log("Produkter", productsFetch);
+    setProducts(productsFetch);
+  };
+
   // USEEFFECTS
   useEffect(() => {
     loadContainers();
+    loadProducts();
   }, []);
 
   useEffect(() => {
@@ -216,6 +235,9 @@ export const TaskProvider = ({ children }) => {
         routeContainers,
         hasCompletedJob,
         confirmCompletedJob,
+        products,
+        addScannedProduct,
+        scannedProducts,
       }}
     >
       {children}

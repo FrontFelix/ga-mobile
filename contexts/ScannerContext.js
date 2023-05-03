@@ -3,6 +3,7 @@ import { BarCodeScanner } from "expo-barcode-scanner";
 import AddContainerDialog from "../components/Modals/AddContainerDialog";
 import * as Location from "expo-location";
 import { updateContainerStatus, getContainers } from "../hooks/scannerHooks";
+import { useTaskContext } from "./TaskContext";
 
 export const ScannerContext = createContext({
   scannedCompleted: false,
@@ -15,6 +16,7 @@ export const ScannerContext = createContext({
   handleNewContainerScan: () => undefined,
   _closeScanner: (scanner) => undefined,
   _openScanner: (scanner) => undefined,
+  handleProductInventory: (type, data) => undefined,
 });
 
 export const ScannerProvider = ({ children }) => {
@@ -32,6 +34,25 @@ export const ScannerProvider = ({ children }) => {
   const [hasLocationPermission, setHasLocationPermission] = useState(null);
   const [barCodeData, setBarCodeData] = useState(null);
   const [newContainerDialog, setNewContainerDialog] = useState(false);
+
+  const { products, scannedProducts, addScannedProduct } = useTaskContext();
+
+  const handleProductInventory = (type, data) => {
+    if (type !== "org.gs1.EAN-13") {
+      return;
+    }
+    if (scannedProducts.indexOf(data) !== -1) {
+      return;
+    } else {
+      console.log("finns inte i scannade produkter...");
+      addScannedProduct(data);
+      if (products.find((product) => product.data === data)) {
+        console.log("produkten finns i listan.");
+      } else {
+        console.log("produkten finns ej i listan");
+      }
+    }
+  };
 
   const closeNewContainerDialog = () => {
     setNewContainerDialog(false);
@@ -87,11 +108,14 @@ export const ScannerProvider = ({ children }) => {
   // };
 
   const handleNewContainerScanning = async ({ type, data }) => {
-    setNewContainerDialog(true);
-    if (isScanningData) {
-      console.log(JSON.parse(data).containerID);
+    // setNewContainerDialog(true);
+    // if (isScanningData) {
+    //   console.log(JSON.parse(data).containerID);
+    // }
+    // setBarCodeData({ type: type, data: data });
+    if (products.find((product) => product.data === data)) {
+      console.log("produkten finns i listan.");
     }
-    setBarCodeData({ type: type, data: data });
     _closeScanner("data");
     _closeScanner("add");
     // Hämta datan för barcodes och locationen...

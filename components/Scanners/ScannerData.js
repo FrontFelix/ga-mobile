@@ -11,7 +11,13 @@ export default function ScannerData() {
     _closeScanner,
     _openScanner,
   } = useScannerContext();
-  const { hasActiveJob, markContainerAsEmpty } = useTaskContext();
+  const {
+    hasActiveJob,
+    markContainerAsEmpty,
+    products,
+    scannedProducts,
+    addScannedProduct,
+  } = useTaskContext();
 
   const handleScan = async ({ type, data }) => {
     _closeScanner("data");

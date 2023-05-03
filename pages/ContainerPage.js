@@ -17,9 +17,9 @@ export default function ContainerPage() {
             <Text>Starta ett uppdrag...</Text>
           </View>
         )}
-        {hasActiveJob && (
+        {!hasActiveJob && (
           <View>
-            <Text>{routeContainers[0].name}</Text>
+            {/* <Text>{routeContainers[0].name}</Text> */}
             <ScannerData />
           </View>
         )}

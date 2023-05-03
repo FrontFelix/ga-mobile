@@ -4,8 +4,11 @@ import { Feather } from "@expo/vector-icons";
 import { useEffect, useState } from "react";
 import { haverSine } from "../hooks/mathHooks";
 import InventoryPage from "../pages/InventoryPage";
+import { useTaskContext } from "../contexts/TaskContext";
 
 export default function InventoryList() {
+  const { products } = useTaskContext();
+
   return (
     <View>
       <View style={{ alignItems: "center" }}>
@@ -22,54 +25,66 @@ export default function InventoryList() {
             marginTop: 10,
           }}
         >
-          <View
-            style={{
-              backgroundColor: "#092C4C",
-              width: "95%",
-              marginTop: 20,
-              height: 115,
-              borderRadius: 4,
-              padding: 10,
-            }}
-          >
+          {products.map((product, index) => (
             <View
+              key={index}
               style={{
-                flexDirection: "row",
-                justifyContent: "space-between",
-                marginBottom: 10,
-                marginTop: 10,
+                backgroundColor: "#092C4C",
+                width: "95%",
+                marginTop: 20,
+                height: 115,
+                borderRadius: 4,
+                padding: 10,
               }}
             >
-              <Text style={{ color: "#FAFAFA", marginBottom: 4 }}>Äpplen</Text>
-              <Text style={{ color: "green" }}>I lager</Text>
-            </View>
-            <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "space-between",
-                marginTop: 10,
-              }}
-            >
-              <Text style={{ color: "#FAFAFA", marginBottom: 4 }}>
-                Pris: 26,90
-              </Text>
-              <TouchableOpacity>
-                <Text
-                  style={{
-                    color: "#FAFAFA",
-                    backgroundColor: "lightblue",
-                    width: 50,
-                    padding: 5,
-                    textAlign: "center",
-                    borderRadius: 6,
-                  }}
-                >
-                  Köp
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  marginBottom: 10,
+                  marginTop: 10,
+                }}
+              >
+                <Text style={{ color: "#FAFAFA", marginBottom: 4 }}>
+                  {product.name}
                 </Text>
-              </TouchableOpacity>
+                <Text style={{ color: "green" }}>
+                  I lager:{" "}
+                  {product.stock > 10
+                    ? "I lager"
+                    : product.stock > 5 && product.stock < 10
+                    ? "Hyfsat"
+                    : "Inget"}
+                </Text>
+              </View>
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  marginTop: 10,
+                }}
+              >
+                <Text style={{ color: "#FAFAFA", marginBottom: 4 }}>
+                  Pris: {product.price}
+                </Text>
+                <TouchableOpacity>
+                  <Text
+                    style={{
+                      color: "#FAFAFA",
+                      backgroundColor: "lightblue",
+                      width: 50,
+                      padding: 5,
+                      textAlign: "center",
+                      borderRadius: 6,
+                    }}
+                  >
+                    Köp
+                  </Text>
+                </TouchableOpacity>
+              </View>
             </View>
-          </View>
-          <View
+          ))}
+          {/* <View
             style={{
               backgroundColor: "#092C4C",
               width: "95%",
@@ -587,7 +602,7 @@ export default function InventoryList() {
                 </Text>
               </TouchableOpacity>
             </View>
-          </View>
+          </View> */}
         </View>
       </ScrollView>
     </View>
