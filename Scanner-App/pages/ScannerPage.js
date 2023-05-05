@@ -17,9 +17,27 @@ export default function ScannerPage() {
   return (
     <View>
       {!isScanning && (
-        <SafeAreaView style={{ padding: 20 }}>
+        <SafeAreaView
+          style={{
+            padding: 20,
+            height: "100%",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
           <TouchableOpacity onPress={() => _openScanner("data")}>
-            <Text>Öppna scanner</Text>
+            <Text
+              style={{
+                backgroundColor: "#092C4C",
+                color: "white",
+                width: 220,
+                textAlign: "center",
+                padding: 30,
+                fontSize: 20,
+              }}
+            >
+              Öppna scanner
+            </Text>
           </TouchableOpacity>
         </SafeAreaView>
       )}
