@@ -4,13 +4,14 @@ import { getProducts } from "../hooks/scannerHooks";
 
 export const ScannerContext = createContext({
   scannedCompleted: false,
-  isAddScan: false,
-  isContainerScan: false,
+  isScanning: false,
   hasCameraPermission: null,
   products: [],
   _closeScanner: (scanner) => undefined,
   _openScanner: (scanner) => undefined,
   handleProductInventory: (type, data) => undefined,
+  scannedProducts: [],
+  inventoryProducts: [],
 });
 
 export const ScannerProvider = ({ children }) => {
@@ -20,14 +21,22 @@ export const ScannerProvider = ({ children }) => {
    * * isContainerScan, om man har öppet scanning som ger dig data av scanning
    */
   const [scannedCompleted, setScannedCompleted] = useState(false); // Om scanningen är completed
-  const [isAddScan, setIsAddScan] = useState(false);
+  const [isScanning, setIsScanning] = useState(false);
   const [products, setProducts] = useState([]);
-  const [isContainerScan, setIsContainerScan] = useState(false);
+  const [scannedProducts, setScannedProducts] = useState([]);
+  const [inventoryProducts, setInventoryProducts] = useState([]);
   // ************************************************************************************************
 
   const [hasCameraPermission, setHasCameraPermission] = useState(null);
 
-  const handleProductInventory = (type, data) => {
+  const addScannedProduct = (product) => {
+    console.log("data läggs tilll....", product);
+    const scannedList = scannedProducts;
+    scannedList.push(product);
+    setScannedProducts(scannedList);
+  };
+
+  const handleProductInventory = ({ type, data }) => {
     if (type !== "org.gs1.EAN-13") {
       return;
     }
@@ -38,6 +47,11 @@ export const ScannerProvider = ({ children }) => {
       addScannedProduct(data);
       if (products.find((product) => product.data === data)) {
         console.log("produkten finns i listan.");
+        const updatedInventory = [...inventoryProducts];
+        updatedInventory.push(
+          products.find((product) => product.data === data)
+        );
+        setInventoryProducts(updatedInventory);
       } else {
         console.log("produkten finns ej i listan");
       }
@@ -46,22 +60,14 @@ export const ScannerProvider = ({ children }) => {
 
   const _openScanner = (scanner) => {
     if (scanner === "data") {
-      setIsContainerScan(true);
-    } else if (scanner === "add") {
-      setIsAddScan(true);
-    } else {
-      return;
-    }
+      setIsScanning(true);
+    } else return;
   };
 
   const _closeScanner = (scanner) => {
     if (scanner === "data") {
-      setIsContainerScan(false);
-    } else if (scanner === "add") {
-      setIsAddScan(false);
-    } else {
-      return;
-    }
+      setIsScanning(false);
+    } else return;
   };
 
   const loadProducts = async () => {
@@ -85,9 +91,10 @@ export const ScannerProvider = ({ children }) => {
         scannedCompleted,
         hasCameraPermission,
         _closeScanner,
-        isAddScan,
-        isContainerScan,
+        isScanning,
         _openScanner,
+        handleProductInventory,
+        inventoryProducts,
       }}
     >
       {children}
