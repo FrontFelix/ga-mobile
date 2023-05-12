@@ -1,7 +1,7 @@
 import { View, Text, Linking, ScrollView } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { Feather } from "@expo/vector-icons";
-import { useEffect, useState } from "react";
+import { useEffect, useState, constructor, props } from "react";
 import { haverSine } from "../hooks/mathHooks";
 import InventoryPage from "../pages/InventoryPage";
 import { useTaskContext } from "../contexts/TaskContext";
@@ -32,7 +32,7 @@ export default function InventoryList() {
                 backgroundColor: "#092C4C",
                 width: "95%",
                 marginTop: 20,
-                height: 115,
+                height: 150,
                 borderRadius: 4,
                 padding: 10,
               }}
@@ -68,18 +68,33 @@ export default function InventoryList() {
                 <Text style={{ color: "#FAFAFA", marginBottom: 4 }}>
                   Pris: {product.price}
                 </Text>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    gap: 10,
+                  }}
+                >
+                  <TouchableOpacity>
+                    <Text style={{ color: "white", fontSize: 30 }}>-</Text>
+                  </TouchableOpacity>
+                  <Text style={{ color: "white", fontSize: 20 }}>0</Text>
+                  <TouchableOpacity>
+                    <Text style={{ color: "white", fontSize: 30 }}>+</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+              <View style={{ alignSelf: "flex-end", marginTop: 10 }}>
                 <TouchableOpacity>
                   <Text
                     style={{
-                      color: "#FAFAFA",
-                      backgroundColor: "lightblue",
-                      width: 50,
-                      padding: 5,
-                      textAlign: "center",
-                      borderRadius: 6,
+                      color: "white",
+                      padding: 6,
+                      marginRight: 2,
+                      backgroundColor: "#6b8093",
                     }}
                   >
-                    Köp
+                    Lägg till
                   </Text>
                 </TouchableOpacity>
               </View>
